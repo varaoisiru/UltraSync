@@ -1,0 +1,337 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 56;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		C0DE00000000000000000002 /* UltraSyncApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000001 /* UltraSyncApp.swift */; };
+		C0DE00000000000000000004 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000003 /* ContentView.swift */; };
+		C0DE00000000000000000006 /* NewsArticle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000005 /* NewsArticle.swift */; };
+		C0DE00000000000000000008 /* WeatherData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000007 /* WeatherData.swift */; };
+		C0DE0000000000000000000A /* SolarData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000009 /* SolarData.swift */; };
+		C0DE0000000000000000000C /* SpaceData.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000000B /* SpaceData.swift */; };
+		C0DE0000000000000000000E /* HueState.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000000D /* HueState.swift */; };
+		C0DE00000000000000000010 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000000F /* APIClient.swift */; };
+		C0DE00000000000000000012 /* DataStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000011 /* DataStore.swift */; };
+		C0DE00000000000000000014 /* FeedService.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000013 /* FeedService.swift */; };
+		C0DE00000000000000000016 /* SpaceCalculator.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000015 /* SpaceCalculator.swift */; };
+		C0DE00000000000000000018 /* ThemeEngine.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000017 /* ThemeEngine.swift */; };
+		C0DE0000000000000000001A /* RetroStyle.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000019 /* RetroStyle.swift */; };
+		C0DE0000000000000000001C /* Components.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000001B /* Components.swift */; };
+		C0DE0000000000000000001E /* NewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000001D /* NewsView.swift */; };
+		C0DE00000000000000000020 /* WeatherView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE0000000000000000001F /* WeatherView.swift */; };
+		C0DE00000000000000000022 /* SolarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000021 /* SolarView.swift */; };
+		C0DE00000000000000000024 /* SpaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000023 /* SpaceView.swift */; };
+		C0DE00000000000000000026 /* HueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000025 /* HueView.swift */; };
+		C0DE00000000000000000028 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000027 /* SettingsView.swift */; };
+		C0DE0000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000029 /* Assets.xcassets */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		C0DE00000000000000000001 /* UltraSyncApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UltraSyncApp.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000003 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000005 /* NewsArticle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsArticle.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000007 /* WeatherData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherData.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000009 /* SolarData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolarData.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000000B /* SpaceData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceData.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000000D /* HueState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HueState.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000000F /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000011 /* DataStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataStore.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000013 /* FeedService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedService.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000015 /* SpaceCalculator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceCalculator.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000017 /* ThemeEngine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeEngine.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000019 /* RetroStyle.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RetroStyle.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000001B /* Components.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Components.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000001D /* NewsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewsView.swift; sourceTree = "<group>"; };
+		C0DE0000000000000000001F /* WeatherView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeatherView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000021 /* SolarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SolarView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000023 /* SpaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000025 /* HueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HueView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000027 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000029 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C0DE0000000000000000002B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C0DE00000000000000000034 /* UltraSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UltraSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		C0DE00000000000000000038 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		C0DE00000000000000000032 = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000031 /* UltraSync */,
+				C0DE00000000000000000033 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		C0DE00000000000000000031 /* UltraSync */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE0000000000000000002C /* App */,
+				C0DE0000000000000000002D /* Models */,
+				C0DE0000000000000000002E /* Services */,
+				C0DE0000000000000000002F /* Theme */,
+				C0DE00000000000000000030 /* Views */,
+				C0DE00000000000000000029 /* Assets.xcassets */,
+				C0DE0000000000000000002B /* Info.plist */,
+			);
+			path = UltraSync;
+			sourceTree = "<group>";
+		};
+		C0DE0000000000000000002C /* App */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000001 /* UltraSyncApp.swift */,
+				C0DE00000000000000000003 /* ContentView.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		C0DE0000000000000000002D /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000005 /* NewsArticle.swift */,
+				C0DE00000000000000000007 /* WeatherData.swift */,
+				C0DE00000000000000000009 /* SolarData.swift */,
+				C0DE0000000000000000000B /* SpaceData.swift */,
+				C0DE0000000000000000000D /* HueState.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		C0DE0000000000000000002E /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE0000000000000000000F /* APIClient.swift */,
+				C0DE00000000000000000011 /* DataStore.swift */,
+				C0DE00000000000000000013 /* FeedService.swift */,
+				C0DE00000000000000000015 /* SpaceCalculator.swift */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		C0DE0000000000000000002F /* Theme */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000017 /* ThemeEngine.swift */,
+			);
+			path = Theme;
+			sourceTree = "<group>";
+		};
+		C0DE00000000000000000030 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000019 /* RetroStyle.swift */,
+				C0DE0000000000000000001B /* Components.swift */,
+				C0DE0000000000000000001D /* NewsView.swift */,
+				C0DE0000000000000000001F /* WeatherView.swift */,
+				C0DE00000000000000000021 /* SolarView.swift */,
+				C0DE00000000000000000023 /* SpaceView.swift */,
+				C0DE00000000000000000025 /* HueView.swift */,
+				C0DE00000000000000000027 /* SettingsView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		C0DE00000000000000000033 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				C0DE00000000000000000034 /* UltraSync.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		C0DE00000000000000000035 /* UltraSync */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C0DE0000000000000000003B /* Build configuration list for PBXNativeTarget "UltraSync" */;
+			buildPhases = (
+				C0DE00000000000000000037 /* Sources */,
+				C0DE00000000000000000038 /* Frameworks */,
+				C0DE00000000000000000039 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = UltraSync;
+			productReference = C0DE00000000000000000034 /* UltraSync.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		C0DE00000000000000000036 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1500;
+				LastUpgradeCheck = 1500;
+				TargetAttributes = {
+					C0DE00000000000000000035 = {
+						CreatedOnToolsVersion = 15.0;
+					};
+				};
+			};
+			buildConfigurationList = C0DE0000000000000000003A /* Build configuration list for PBXProject "UltraSync" */;
+			compatibilityVersion = "Xcode 14.0";
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = C0DE00000000000000000032;
+			productRefGroup = C0DE00000000000000000033 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C0DE00000000000000000035 /* UltraSync */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		C0DE00000000000000000039 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0DE0000000000000000002A /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		C0DE00000000000000000037 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C0DE00000000000000000002 /* UltraSyncApp.swift in Sources */,
+				C0DE00000000000000000004 /* ContentView.swift in Sources */,
+				C0DE00000000000000000006 /* NewsArticle.swift in Sources */,
+				C0DE00000000000000000008 /* WeatherData.swift in Sources */,
+				C0DE0000000000000000000A /* SolarData.swift in Sources */,
+				C0DE0000000000000000000C /* SpaceData.swift in Sources */,
+				C0DE0000000000000000000E /* HueState.swift in Sources */,
+				C0DE00000000000000000010 /* APIClient.swift in Sources */,
+				C0DE00000000000000000012 /* DataStore.swift in Sources */,
+				C0DE00000000000000000014 /* FeedService.swift in Sources */,
+				C0DE00000000000000000016 /* SpaceCalculator.swift in Sources */,
+				C0DE00000000000000000018 /* ThemeEngine.swift in Sources */,
+				C0DE0000000000000000001A /* RetroStyle.swift in Sources */,
+				C0DE0000000000000000001C /* Components.swift in Sources */,
+				C0DE0000000000000000001E /* NewsView.swift in Sources */,
+				C0DE00000000000000000020 /* WeatherView.swift in Sources */,
+				C0DE00000000000000000022 /* SolarView.swift in Sources */,
+				C0DE00000000000000000024 /* SpaceView.swift in Sources */,
+				C0DE00000000000000000026 /* HueView.swift in Sources */,
+				C0DE00000000000000000028 /* SettingsView.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		C0DE0000000000000000003C /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Debug;
+		};
+		C0DE0000000000000000003D /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+			};
+			name = Release;
+		};
+		C0DE0000000000000000003E /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UltraSync/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.varaoisiru.ultrasync;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		C0DE0000000000000000003F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = UltraSync/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.varaoisiru.ultrasync;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C0DE0000000000000000003A /* Build configuration list for PBXProject "UltraSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0DE0000000000000000003C /* Debug */,
+				C0DE0000000000000000003D /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C0DE0000000000000000003B /* Build configuration list for PBXNativeTarget "UltraSync" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C0DE0000000000000000003E /* Debug */,
+				C0DE0000000000000000003F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = C0DE00000000000000000036 /* Project object */;
+}
