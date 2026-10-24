@@ -1,0 +1,14 @@
+[Unit]
+Description=UltraSync GUI server (news, weather, solar & space dashboard)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/ultrasync --host 127.0.0.1 --port 8077
+Restart=on-failure
+RestartSec=5
+# Config: ~/.config/ultrasync/config.json · Cache: ~/.cache/ultrasync/
+
+[Install]
+WantedBy=default.target

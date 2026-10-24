@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0">
+  <channel>
+    <title>Fixture News</title>
+    <link>https://example.com/</link>
+    <description>Test fixture feed</description>
+    <item>
+      <title>Solar Storm Approaches Earth</title>
+      <link>https://example.com/articles/solar-storm</link>
+      <description>&lt;p&gt;A &lt;b&gt;strong&lt;/b&gt; geomagnetic storm is forecast for tonight.&lt;/p&gt;</description>
+      <pubDate>Sat, 24 Oct 2026 10:30:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>City Council Approves Night Sky Reserve</title>
+      <link>https://example.com/articles/night-sky</link>
+      <description>The council voted to protect dark skies across the valley.</description>
+      <pubDate>Fri, 23 Oct 2026 22:15:00 GMT</pubDate>
+    </item>
+    <item>
+      <title>Undated Wire Brief</title>
+      <link>https://example.com/articles/wire-brief</link>
+      <description>A short brief without a publication date.</description>
+    </item>
+  </channel>
+</rss>

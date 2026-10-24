@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UltraSync</title>
+<link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+<div class="scanlines" aria-hidden="true"></div>
+
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">▚</span>
+    <div>
+      <h1>ULTRASYNC</h1>
+      <div class="tagline">NEWS · WEATHER · SOLAR · SPACE</div>
+    </div>
+  </div>
+  <div class="topmeta">
+    <div class="clock" id="clock">--:--:--</div>
+    <div class="loc" id="location">locating…</div>
+  </div>
+  <div class="topcontrols">
+    <div class="themes" id="themes" title="Theme"></div>
+    <button id="unitsBtn" class="chipbtn" title="Toggle units">°C</button>
+    <span class="statuspill" id="statusPill">CONNECTING</span>
+  </div>
+</header>
+
+<main class="grid">
+  <!-- NEWS -->
+  <section class="panel news" id="panel-news">
+    <div class="panel-head">
+      <h2>📰 NEWS</h2>
+      <span class="badge" id="newsBadge">…</span>
+      <div class="panel-actions">
+        <input id="newsSearch" type="search" placeholder="Search headlines…">
+        <button id="newsRefresh" class="chipbtn">↻ Refresh</button>
+        <button id="newsReadAll" class="chipbtn">Mark all read</button>
+      </div>
+    </div>
+    <div class="chips" id="sourceChips"></div>
+    <ul class="articles" id="articles"></ul>
+    <div class="empty" id="newsEmpty" hidden>No articles yet — hit Refresh to fetch the feeds.</div>
+  </section>
+
+  <!-- WEATHER -->
+  <section class="panel weather" id="panel-weather">
+    <div class="panel-head">
+      <h2>🌡 WEATHER</h2>
+      <span class="badge" id="wxBadge">…</span>
+    </div>
+    <div class="wx-now">
+      <div class="wx-icon" id="wxIcon">?</div>
+      <div class="wx-temp" id="wxTemp">--</div>
+      <div class="wx-desc">
+        <div id="wxDesc">—</div>
+        <div class="dim" id="wxFeels"></div>
+      </div>
+      <div class="wx-stats" id="wxStats"></div>
+    </div>
+    <canvas id="tempChart" height="90"></canvas>
+    <div class="wx-days" id="wxDays"></div>
+    <div class="empty" id="wxEmpty" hidden>Weather unavailable — offline and no cache yet.</div>
+  </section>
+
+  <!-- SOLAR -->
+  <section class="panel solar" id="panel-solar">
+    <div class="panel-head">
+      <h2>☀ SOLAR ACTIVITY</h2>
+      <span class="badge" id="solarBadge">…</span>
+    </div>
+    <div class="gauges">
+      <div class="gauge"><canvas id="gaugeSunspot" width="120" height="80"></canvas><label>Sunspot #</label><div class="gval" id="valSunspot">—</div></div>
+      <div class="gauge"><canvas id="gaugeFlux" width="120" height="80"></canvas><label>Solar Flux</label><div class="gval" id="valFlux">—</div></div>
+      <div class="gauge"><canvas id="gaugeKp" width="120" height="80"></canvas><label>Kp Index</label><div class="gval" id="valKp">—</div></div>
+    </div>
+    <div class="kv" id="solarKv"></div>
+    <canvas id="kpChart" height="70"></canvas>
+    <div class="empty" id="solarEmpty" hidden>Solar data unavailable — offline and no cache yet.</div>
+  </section>
+
+  <!-- SPACE -->
+  <section class="panel space" id="panel-space">
+    <div class="panel-head">
+      <h2>☾ SPACE</h2>
+      <span class="badge" id="spaceBadge">…</span>
+    </div>
+    <div class="space-flex">
+      <div class="moonbox">
+        <canvas id="moonCanvas" width="110" height="110"></canvas>
+        <div class="moon-name" id="moonName">—</div>
+        <div class="dim" id="moonIllum"></div>
+      </div>
+      <div class="kv grow" id="spaceKv"></div>
+    </div>
+    <table class="planets" id="planets"></table>
+    <div class="iss" id="issBox"></div>
+  </section>
+
+  <!-- HUE -->
+  <section class="panel hue" id="panel-hue">
+    <div class="panel-head">
+      <h2>💡 PHILIPS HUE</h2>
+      <span class="badge" id="hueBadge">…</span>
+      <div class="panel-actions">
+        <label class="switch">Sync to conditions
+          <input type="checkbox" id="hueSyncToggle">
+          <span class="track"></span>
+        </label>
+      </div>
+    </div>
+    <div id="hueBody">
+      <div class="lights" id="hueLights"></div>
+      <div class="fxrow">
+        <select id="fxSelect"></select>
+        <button id="fxPlay" class="chipbtn">▶ Play FX</button>
+        <button id="fxStop" class="chipbtn">■ Stop</button>
+        <span class="dim" id="fxNow"></span>
+      </div>
+      <details class="huecfg">
+        <summary>Bridge settings</summary>
+        <div class="cfgform">
+          <label>Bridge IP <input id="hueBridge" placeholder="192.168.1.x"></label>
+          <label>API key <input id="hueKey" type="password" placeholder="stored locally, never shown"></label>
+          <label>Light IDs <input id="hueLightIds" placeholder="1, 6"></label>
+          <button id="hueSave" class="chipbtn">Save</button>
+          <span class="dim" id="hueSaveMsg"></span>
+        </div>
+      </details>
+    </div>
+    <div class="empty" id="hueEmpty" hidden>Hue bridge not configured — add the bridge IP and API key under Bridge settings. (In the terminal: config file ~/.config/ultrasync/config.json, or env HUE_BRIDGE_IP / HUE_API_KEY.)</div>
+  </section>
+</main>
+
+<footer class="foot">
+  <span>UltraSync 1.0.0 — merged from Ultrareader + SolarSync</span>
+  <span class="dim">Data: Open-Meteo · NOAA SWPC · wheretheiss.at · RSS feeds — all free, no keys</span>
+  <span class="dim" id="updatedAt"></span>
+</footer>
+
+<!-- Article reader -->
+<div class="modal" id="reader" hidden>
+  <div class="modal-card">
+    <div class="modal-head">
+      <h3 id="readerTitle"></h3>
+      <button id="readerClose" class="chipbtn">✕ Close [Q]</button>
+    </div>
+    <div class="modal-body" id="readerBody"></div>
+    <div class="modal-foot"><a id="readerLink" href="#" target="_blank" rel="noopener">Open original ↗</a></div>
+  </div>
+</div>
+
+<script src="/static/app.js"></script>
+</body>
+</html>

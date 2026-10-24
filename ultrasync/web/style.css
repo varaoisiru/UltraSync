@@ -1,0 +1,159 @@
+/* UltraSync GUI — retro phosphor design language.
+   All colors come from the active theme via CSS variables set by app.js. */
+:root {
+  --bg: #0a0a0a;
+  --primary: #00ff41;
+  --accent1: #ff6600;
+  --accent2: #ffaa00;
+  --accent3: #ff3300;
+  --dim: #006600;
+  --panel: rgba(255, 255, 255, 0.03);
+  --line: rgba(255, 255, 255, 0.12);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  background: var(--bg);
+  color: var(--primary);
+  font-family: "JetBrains Mono", "Fira Code", ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  min-height: 100vh;
+  transition: background 0.4s, color 0.4s;
+}
+.scanlines {
+  pointer-events: none; position: fixed; inset: 0; z-index: 50;
+  background: repeating-linear-gradient(0deg, rgba(0,0,0,0.16) 0 1px, transparent 1px 3px);
+  mix-blend-mode: multiply;
+}
+.topbar {
+  display: flex; align-items: center; gap: 24px; flex-wrap: wrap;
+  padding: 14px 20px; border-bottom: 2px solid var(--accent1);
+  background: linear-gradient(180deg, rgba(255,255,255,0.04), transparent);
+}
+.brand { display: flex; align-items: center; gap: 12px; }
+.logo { font-size: 34px; color: var(--accent1); text-shadow: 0 0 12px var(--accent1); }
+.brand h1 { margin: 0; font-size: 26px; letter-spacing: 4px; color: var(--primary);
+  text-shadow: 0 0 10px var(--primary); }
+.tagline { font-size: 10px; letter-spacing: 3px; color: var(--accent2); }
+.topmeta { margin-left: auto; text-align: right; }
+.clock { font-size: 24px; color: var(--accent2); text-shadow: 0 0 8px var(--accent2); }
+.loc { font-size: 12px; color: var(--dim); filter: brightness(1.8); }
+.topcontrols { display: flex; align-items: center; gap: 10px; }
+.themes { display: flex; gap: 6px; }
+.swatch { width: 20px; height: 20px; border-radius: 4px; border: 2px solid transparent;
+  cursor: pointer; padding: 0; }
+.swatch.active { border-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.6); }
+.chipbtn {
+  background: transparent; color: var(--primary); border: 1px solid var(--dim);
+  border-radius: 4px; padding: 5px 10px; font: inherit; font-size: 12px; cursor: pointer;
+}
+.chipbtn:hover { border-color: var(--primary); box-shadow: 0 0 6px var(--dim); }
+.chipbtn:disabled { opacity: 0.4; cursor: wait; }
+.statuspill { font-size: 11px; padding: 4px 10px; border-radius: 20px; border: 1px solid var(--dim); }
+.statuspill.live { color: #0a0; border-color: #0a0; }
+.statuspill.cached { color: var(--accent2); border-color: var(--accent2); }
+.statuspill.offline { color: var(--accent3); border-color: var(--accent3); }
+
+.grid {
+  display: grid; gap: 14px; padding: 14px 20px;
+  grid-template-columns: repeat(12, 1fr);
+}
+.panel {
+  background: var(--panel); border: 1px solid var(--line); border-radius: 8px;
+  padding: 12px 14px; min-width: 0;
+  box-shadow: inset 0 0 24px rgba(0,0,0,0.35);
+}
+.panel.news { grid-column: span 5; }
+.panel.weather { grid-column: span 7; }
+.panel.solar { grid-column: span 5; }
+.panel.space { grid-column: span 7; }
+.panel.hue { grid-column: span 12; }
+@media (max-width: 1000px) { .panel { grid-column: span 12 !important; } }
+.panel-head { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 8px; }
+.panel-head h2 { margin: 0; font-size: 15px; letter-spacing: 2px; color: var(--accent1);
+  text-shadow: 0 0 6px var(--accent1); }
+.badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; border: 1px solid var(--dim); color: var(--dim); filter: brightness(1.7); }
+.badge.stale { color: var(--accent2); border-color: var(--accent2); }
+.panel-actions { margin-left: auto; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+.panel-actions input[type="search"], .cfgform input, select {
+  background: rgba(0,0,0,0.4); color: var(--primary); border: 1px solid var(--dim);
+  border-radius: 4px; padding: 5px 8px; font: inherit; font-size: 12px;
+}
+.dim { opacity: 0.65; font-size: 12px; }
+.empty { padding: 14px; border: 1px dashed var(--dim); border-radius: 6px; font-size: 13px; }
+
+/* news */
+.chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 8px; }
+.chip { font-size: 11px; padding: 3px 9px; border-radius: 12px; border: 1px solid var(--dim);
+  background: transparent; color: var(--primary); cursor: pointer; font: inherit; }
+.chip.active { background: var(--dim); color: #fff; }
+.articles { list-style: none; margin: 0; padding: 0; max-height: 430px; overflow-y: auto; }
+.articles li { padding: 7px 6px; border-bottom: 1px solid rgba(255,255,255,0.06); cursor: pointer;
+  display: flex; gap: 8px; align-items: baseline; }
+.articles li:hover { background: rgba(255,255,255,0.05); }
+.articles .src { font-size: 10px; color: var(--accent2); min-width: 52px; letter-spacing: 1px; }
+.articles .ttl { flex: 1; font-size: 13px; }
+.articles li.viewed .ttl { opacity: 0.5; }
+.articles .age { font-size: 11px; color: var(--accent1); }
+.articles .dot { color: var(--accent3); font-size: 10px; }
+
+/* weather */
+.wx-now { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.wx-icon { font-size: 44px; }
+.wx-temp { font-size: 40px; color: var(--accent2); text-shadow: 0 0 10px var(--accent2); }
+.wx-desc { font-size: 15px; }
+.wx-stats { margin-left: auto; display: grid; grid-template-columns: auto auto; gap: 2px 14px; font-size: 12px; }
+.wx-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; margin-top: 8px; }
+.day { text-align: center; border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 6px 2px; font-size: 11px; }
+.day .ic { font-size: 18px; display: block; }
+.day .hi { color: var(--accent2); }
+canvas { max-width: 100%; }
+
+/* solar */
+.gauges { display: flex; gap: 10px; justify-content: space-around; flex-wrap: wrap; }
+.gauge { text-align: center; }
+.gauge label { font-size: 11px; letter-spacing: 1px; color: var(--accent2); }
+.gval { font-size: 16px; }
+.kv { display: grid; grid-template-columns: auto 1fr; gap: 3px 12px; font-size: 13px; margin-top: 8px; }
+.kv dt { color: var(--accent2); }
+.kv dd { margin: 0; }
+
+/* space */
+.space-flex { display: flex; gap: 18px; align-items: flex-start; flex-wrap: wrap; }
+.moonbox { text-align: center; }
+.moon-name { font-size: 13px; margin-top: 4px; }
+.kv.grow { flex: 1; min-width: 220px; }
+.planets { width: 100%; border-collapse: collapse; font-size: 12px; margin-top: 10px; }
+.planets td, .planets th { padding: 4px 6px; border-bottom: 1px solid rgba(255,255,255,0.06); text-align: left; }
+.vis-yes { color: #4caf50; } .vis-no { opacity: 0.4; }
+.iss { margin-top: 10px; font-size: 13px; border-top: 1px dashed var(--dim); padding-top: 8px; }
+
+/* hue */
+.lights { display: flex; gap: 10px; flex-wrap: wrap; }
+.light { border: 1px solid var(--line); border-radius: 8px; padding: 10px; min-width: 180px; }
+.light .lname { font-size: 13px; margin-bottom: 6px; }
+.light input[type="range"] { width: 100%; accent-color: var(--accent2); }
+.fxrow { display: flex; gap: 8px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+.switch { display: flex; align-items: center; gap: 8px; font-size: 12px; cursor: pointer; }
+.switch input { display: none; }
+.switch .track { width: 36px; height: 18px; border-radius: 10px; border: 1px solid var(--dim); position: relative; }
+.switch .track::after { content: ""; position: absolute; top: 2px; left: 2px; width: 12px; height: 12px;
+  border-radius: 50%; background: var(--dim); transition: all 0.2s; }
+.switch input:checked + .track::after { left: 20px; background: var(--accent2); }
+.huecfg { margin-top: 12px; font-size: 12px; }
+.cfgform { display: flex; gap: 10px; flex-wrap: wrap; align-items: end; margin-top: 8px; }
+.cfgform label { display: flex; flex-direction: column; gap: 4px; }
+
+.foot { display: flex; gap: 20px; flex-wrap: wrap; padding: 10px 20px 20px; font-size: 12px; }
+
+/* modal reader */
+.modal { position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 60;
+  display: flex; align-items: center; justify-content: center; }
+.modal[hidden] { display: none; }
+.modal-card { background: var(--bg); border: 2px solid var(--accent1); border-radius: 10px;
+  width: min(860px, 92vw); max-height: 88vh; display: flex; flex-direction: column; padding: 16px; }
+.modal-head { display: flex; gap: 10px; align-items: flex-start; }
+.modal-head h3 { flex: 1; margin: 0; color: var(--accent2); font-size: 16px; }
+.modal-body { overflow-y: auto; margin-top: 12px; font-size: 14px; line-height: 1.55; }
+.modal-body p { margin: 0 0 10px; }
+.modal-foot { margin-top: 10px; }
+.modal-foot a { color: var(--accent1); }
