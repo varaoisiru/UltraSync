@@ -1,6 +1,6 @@
 # Maintainer: Justin Meyers <varaoisiru@users.noreply.github.com>
 pkgname=ultrasync
-pkgver=1.0.0
+pkgver=2.0.0
 pkgrel=1
 pkgdesc="Unified news, weather, solar and space dashboard (GUI + TUI), merged from Ultrareader and SolarSync"
 arch=('any')

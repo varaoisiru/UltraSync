@@ -49,9 +49,8 @@ struct SolarView: View {
                 GaugeView(value: solar.solarFlux, maxValue: 300,
                           label: "Solar Flux",
                           display: solar.solarFlux.map { String(format: "%.0f", $0) } ?? "--")
-                GaugeView(value: solar.geomagnetic?.kpIndex, maxValue: 9,
-                          label: "Kp Index",
-                          display: solar.geomagnetic.map { String(format: "%.0f", $0.kpIndex) } ?? "--")
+                AnimatedKpGaugeView(value: solar.geomagnetic?.kpIndex,
+                                    display: solar.geomagnetic.map { String(format: "%.0f", $0.kpIndex) } ?? "--")
             }
             .retroParallax()
             if let geo = solar.geomagnetic {

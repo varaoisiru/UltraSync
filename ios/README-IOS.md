@@ -18,7 +18,11 @@ ios/
   tools/check_parity.py          ← theme parity checker (see below)
 ```
 
-- Bundle ID: `com.varaoisiru.ultrasync` · Version 1.0.0
+- Bundle ID: `com.varaoisiru.ultrasync` · Version 2.0.0
+- 2.0 additions: an **Ambient tab** (full-screen cycling highlights in
+  Liquid Glass, mirroring the web GUI's ambient mode) and an **animated
+  Kp gauge** in the Solar tab (spring sweep + needle, storm halo at
+  Kp ≥ 5).
 - Deployment target: iOS 17 · SwiftUI + Foundation only, no third-party
   dependencies, nothing to fetch before building.
 - Signing: **free provisioning only** (see next section). The project

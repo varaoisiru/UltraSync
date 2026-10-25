@@ -87,6 +87,7 @@ DEFAULT_CONFIG = {
         "api_key": None,
         "lights": [1, 6],
         "sync_conditions": False,
+        "sync_mode": "conditions",
     },
     "display": {
         "show_iss": True,

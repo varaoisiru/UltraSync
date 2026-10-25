@@ -1,6 +1,6 @@
 import SwiftUI
 
-/// Root tab shell: News / Weather / Solar / Space / Hue / Settings,
+/// Root tab shell: News / Weather / Solar / Space / Hue / Ambient / Settings,
 /// skinned by the active theme with the optional scanline overlay.
 /// The News tab carries the unread badge, like the GUI's status bar.
 /// On the iOS 26 SDK the tab bar is Liquid Glass natively; it also
@@ -35,9 +35,12 @@ struct ContentView: View {
                 HueView()
                     .tabItem { Label("Hue", systemImage: "lightbulb") }
                     .tag(4)
+                AmbientView()
+                    .tabItem { Label("Ambient", systemImage: "sparkles") }
+                    .tag(5)
                 SettingsView()
                     .tabItem { Label("Settings", systemImage: "gearshape") }
-                    .tag(5)
+                    .tag(6)
             }
             .tint(theme.accent1Color)
             .tabBarMinimizeBehavior(.onScrollDown)

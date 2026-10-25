@@ -4,7 +4,7 @@
 # when makepkg is unavailable.
 set -e
 cd "$(dirname "$0")/.."
-VERSION="1.0.0"
+VERSION="2.0.0"
 
 if command -v makepkg >/dev/null; then
     BUILD_DIR="$(mktemp -d)"

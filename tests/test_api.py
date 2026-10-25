@@ -18,7 +18,7 @@ def test_status(service):
     r = make_client(service).get("/api/status")
     assert r.status_code == 200
     body = r.json()
-    assert body["ok"] is True and body["version"] == "1.0.0"
+    assert body["ok"] is True and body["version"] == "2.0.0"
     assert body["unread"] == 2
 
 
@@ -90,5 +90,6 @@ def test_hue_fx_list(service):
     r = make_client(service).get("/api/hue/fx")
     assert r.status_code == 200
     effects = r.json()["effects"]
-    assert len(effects) == 100
+    assert len(effects) == 101
     assert effects[0]["name"] == "Aurora Sweep"
+    assert effects[-1]["name"] == "Aurora Veil"

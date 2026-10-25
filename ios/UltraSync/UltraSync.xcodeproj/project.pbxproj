@@ -27,6 +27,7 @@
 		C0DE00000000000000000024 /* SpaceView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000023 /* SpaceView.swift */; };
 		C0DE00000000000000000026 /* HueView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000025 /* HueView.swift */; };
 		C0DE00000000000000000028 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000027 /* SettingsView.swift */; };
+		C0DE00000000000000000041 /* AmbientView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000040 /* AmbientView.swift */; };
 		C0DE0000000000000000002A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C0DE00000000000000000029 /* Assets.xcassets */; };
 /* End PBXBuildFile section */
 
@@ -51,6 +52,7 @@
 		C0DE00000000000000000023 /* SpaceView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpaceView.swift; sourceTree = "<group>"; };
 		C0DE00000000000000000025 /* HueView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HueView.swift; sourceTree = "<group>"; };
 		C0DE00000000000000000027 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		C0DE00000000000000000040 /* AmbientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AmbientView.swift; sourceTree = "<group>"; };
 		C0DE00000000000000000029 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C0DE0000000000000000002B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		C0DE00000000000000000034 /* UltraSync.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = UltraSync.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -140,6 +142,7 @@
 				C0DE00000000000000000023 /* SpaceView.swift */,
 				C0DE00000000000000000025 /* HueView.swift */,
 				C0DE00000000000000000027 /* SettingsView.swift */,
+				C0DE00000000000000000040 /* AmbientView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -240,6 +243,7 @@
 				C0DE00000000000000000024 /* SpaceView.swift in Sources */,
 				C0DE00000000000000000026 /* HueView.swift in Sources */,
 				C0DE00000000000000000028 /* SettingsView.swift in Sources */,
+				C0DE00000000000000000041 /* AmbientView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -268,7 +272,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraSync/Info.plist;
@@ -277,7 +281,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.varaoisiru.ultrasync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
@@ -294,7 +298,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 2;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = NO;
 				INFOPLIST_FILE = UltraSync/Info.plist;
@@ -303,7 +307,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0.0;
+				MARKETING_VERSION = 2.0.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.varaoisiru.ultrasync;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;

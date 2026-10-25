@@ -201,7 +201,7 @@ struct SettingsView: View {
     private func aboutPanel(theme: ThemePalette) -> some View {
         VStack(alignment: .leading, spacing: 6) {
             PanelHeader(title: "About")
-            Text("UltraSync 1.0.0 — native iOS fork of the UltraSync dashboard (merged from Ultrareader + SolarSync).")
+            Text("UltraSync 2.0.0 — native iOS fork of the UltraSync dashboard (merged from Ultrareader + SolarSync).")
                 .font(Retro.font(Retro.smallSize))
                 .foregroundColor(theme.primaryColor.opacity(0.9))
             Text("Data: Open-Meteo · NOAA SWPC · wheretheiss.at · RSS feeds — all free, no keys.")

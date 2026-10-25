@@ -82,6 +82,88 @@ struct KpBarChart: View {
     }
 }
 
+/// Animated Kp gauge (2.0): a semicircle dial whose fill and needle
+/// sweep to the live value on a spring, with a breathing storm halo
+/// (TimelineView-driven) whenever Kp reaches storm level (>= 5) —
+/// the iOS counterpart of the web GUI's Kp-reactive background.
+struct AnimatedKpGaugeView: View {
+    @EnvironmentObject var themeManager: ThemeManager
+    let value: Double?
+    let display: String
+
+    @State private var sweep: Double = 0
+
+    private var target: Double { min(1, max(0, (value ?? 0) / 9)) }
+    private var storm: Bool { (value ?? 0) >= 5 }
+
+    var body: some View {
+        let theme = themeManager.theme
+        VStack(spacing: 2) {
+            ZStack(alignment: .bottom) {
+                if storm {
+                    TimelineView(.animation) { timeline in
+                        let pulse = 0.5 + 0.5 * sin(timeline.date.timeIntervalSinceReferenceDate * 2.2)
+                        Circle()
+                            .fill(theme.accent3Color.opacity(0.16 + 0.16 * pulse))
+                            .frame(width: 86, height: 86)
+                            .blur(radius: 16)
+                            .offset(y: 26)
+                    }
+                }
+                Canvas { context, size in
+                    let lineWidth: CGFloat = 9
+                    let radius = (size.width - lineWidth) / 2
+                    let center = CGPoint(x: size.width / 2, y: size.height - lineWidth / 2)
+                    var track = Path()
+                    track.addArc(center: center, radius: radius,
+                                 startAngle: .degrees(180), endAngle: .degrees(360),
+                                 clockwise: false)
+                    context.stroke(track, with: .color(theme.dimColor.opacity(0.5)),
+                                   style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                    if sweep > 0 {
+                        var arc = Path()
+                        arc.addArc(center: center, radius: radius,
+                                   startAngle: .degrees(180),
+                                   endAngle: .degrees(180 + 180 * sweep),
+                                   clockwise: false)
+                        let color = storm ? theme.accent3Color
+                            : (sweep > 0.5 ? theme.accent1Color : theme.accent2Color)
+                        context.stroke(arc, with: .color(color),
+                                       style: StrokeStyle(lineWidth: lineWidth, lineCap: .round))
+                        // needle at the swept angle
+                        let a = Double.pi * (1 + sweep)
+                        let tip = CGPoint(x: center.x + CGFloat(cos(a)) * (radius - 13),
+                                          y: center.y + CGFloat(sin(a)) * (radius - 13))
+                        var needle = Path()
+                        needle.move(to: center)
+                        needle.addLine(to: tip)
+                        context.stroke(needle, with: .color(theme.primaryColor),
+                                       style: StrokeStyle(lineWidth: 2, lineCap: .round))
+                    }
+                }
+                .aspectRatio(2, contentMode: .fit)
+                Text(display)
+                    .font(Retro.font(17, weight: .bold))
+                    .foregroundColor(storm ? theme.accent3Color : theme.primaryColor)
+                    .phosphorGlow(theme, radius: 4)
+                    .padding(.bottom, 2)
+                    .contentTransition(.numericText())
+            }
+            Text("Kp Index")
+                .font(Retro.font(10))
+                .foregroundColor(theme.accent2Color)
+        }
+        .onAppear { animateToTarget() }
+        .onChange(of: value) { _, _ in animateToTarget() }
+    }
+
+    private func animateToTarget() {
+        withAnimation(.spring(response: 1.1, dampingFraction: 0.72)) {
+            sweep = target
+        }
+    }
+}
+
 /// Moon-phase disc: a lit circle with the shadow terminator drawn as an
 /// ellipse whose width follows the phase — the same geometry the
 /// Python moon_illumination describes: illum = (1 − cos 2πφ) / 2.

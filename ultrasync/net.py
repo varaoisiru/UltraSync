@@ -9,7 +9,7 @@ import os
 import urllib.error
 import urllib.request
 
-USER_AGENT = "UltraSync/1.0 Terminal-App"
+USER_AGENT = "UltraSync/2.0 Terminal-App"
 
 
 def net_disabled() -> bool:

@@ -9,10 +9,12 @@ import threading
 from pathlib import Path
 
 from fastapi import FastAPI, Request
-from fastapi.responses import FileResponse, JSONResponse
+from fastapi.responses import FileResponse, JSONResponse, Response
 from fastapi.staticfiles import StaticFiles
 
 from . import __version__, themes
+from .briefing import assemble_briefing, render_briefing_png
+from .circadian import circadian_from_space
 from .config import Config
 from .hue import HueClient, HueFXPlayer, condition_payload
 from .service import DataService
@@ -51,11 +53,20 @@ class HueManager:
             "lights": [lights[k] for k in sorted(lights, key=int)] if lights else [],
             "configured_light_ids": self.client.lights,
             "sync_conditions": bool(self.cfg.get("hue", "sync_conditions", default=False)),
+            "sync_mode": self.cfg.get("hue", "sync_mode", default="conditions"),
             "fx": self.player.status(),
         }
 
     def sync_now(self, service: DataService) -> dict:
-        """Push the current-conditions payload to all configured lights."""
+        """Push the active sync engine's payload to all configured lights.
+
+        Mode comes from config hue.sync_mode: "conditions" (weather/Kp,
+        the v1 engine) or "circadian" (sun-position engine, v2)."""
+        if self.cfg.get("hue", "sync_mode", default="conditions") == "circadian":
+            result = self.circadian_now(service)
+            if result is not None:
+                return result
+            # sun times unavailable — fall through to condition sync
         weather = service.get_weather()
         solar = service.get_solar()
         code = (weather.get("current") or {}).get("weather_code")
@@ -64,6 +75,14 @@ class HueManager:
         payload = condition_payload(code, kp, theme)
         applied = self.client.set_all(payload) if self.client.configured else 0
         return {"applied_to": applied, "payload": payload}
+
+    def circadian_now(self, service: DataService):
+        """Compute the circadian state and push it (None if no sun times)."""
+        state = circadian_from_space(service.get_space())
+        if state is None:
+            return None
+        applied = self.client.set_all(state["payload"]) if self.client.configured else 0
+        return {"applied_to": applied, **state}
 
 
 def create_app(service: DataService = None, cfg: Config = None) -> FastAPI:
@@ -105,7 +124,7 @@ def create_app(service: DataService = None, cfg: Config = None) -> FastAPI:
             if key in loc:
                 cfg.set("location", key, value=loc[key])
         hue = body.get("hue", {})
-        for key in ("bridge_ip", "lights", "sync_conditions"):
+        for key in ("bridge_ip", "lights", "sync_conditions", "sync_mode"):
             if key in hue:
                 cfg.set("hue", key, value=hue[key])
         if hue.get("api_key"):  # accepted, stored, never echoed back
@@ -168,6 +187,25 @@ def create_app(service: DataService = None, cfg: Config = None) -> FastAPI:
     def space():
         return service.get_space()
 
+    # -- briefing card (2.0) --------------------------------------------
+    @app.get("/api/briefing")
+    def briefing():
+        return assemble_briefing(service.get_weather(), service.get_solar(),
+                                 service.get_news(limit=5))
+
+    @app.get("/api/briefing.png")
+    def briefing_png():
+        data = assemble_briefing(service.get_weather(), service.get_solar(),
+                                 service.get_news(limit=5))
+        theme = themes.get_theme(cfg.get("preferences", "theme", default="cyberfire"))
+        png = render_briefing_png(data, theme)
+        if png is None:
+            return JSONResponse(
+                {"error": "Pillow is not installed — briefing card rendering "
+                          "unavailable, JSON briefing still works",
+                 "briefing": data}, status_code=501)
+        return Response(png, media_type="image/png")
+
     # -- hue ------------------------------------------------------------------
     @app.get("/api/hue/status")
     def hue_status():
@@ -210,12 +248,26 @@ def create_app(service: DataService = None, cfg: Config = None) -> FastAPI:
     @app.post("/api/hue/sync")
     async def hue_sync(req: Request):
         body = await req.json()
+        if body.get("mode") in ("conditions", "circadian"):
+            cfg.set("hue", "sync_mode", value=body["mode"])
         if "enabled" in body:
             cfg.set("hue", "sync_conditions", value=bool(body["enabled"]))
         if not hue_mgr.client.configured:
             return {"configured": False, "sync_conditions":
-                    bool(cfg.get("hue", "sync_conditions", default=False))}
+                    bool(cfg.get("hue", "sync_conditions", default=False)),
+                    "sync_mode": cfg.get("hue", "sync_mode", default="conditions")}
         result = hue_mgr.sync_now(service)
         return {"configured": True, **result}
+
+    @app.post("/api/hue/circadian")
+    async def hue_circadian(req: Request):
+        body = await req.json() if req.headers.get("content-length") else {}
+        if body.get("set_mode"):
+            cfg.set("hue", "sync_mode", value="circadian")
+        state = hue_mgr.circadian_now(service)
+        if state is None:
+            return JSONResponse({"error": "sun times unavailable"},
+                                status_code=503)
+        return {"configured": hue_mgr.client.configured, **state}
 
     return app

@@ -1,4 +1,4 @@
-# UltraSync 1.0.0
+# UltraSync 2.0.0
 
 **One dashboard for news, weather, solar activity, and space — in a retro
 phosphor skin, on the web and in your terminal.**
@@ -21,8 +21,32 @@ search and an in-app article reader; WEATHER with current conditions, a canvas
 24-hour temperature curve and a 7-day outlook; SOLAR with sunspot/flux/Kp
 gauges and a Kp forecast chart; SPACE with sun & moon times, a rendered moon
 phase disc, real computed planet positions, and the live ISS position; and a
-HUE panel with per-light control, the 100-effect FX library, and
+HUE panel with per-light control, the 101-effect FX library, and
 sync-to-conditions lighting.
+
+## What's new in 2.0
+
+- **Command palette** — Ctrl/Cmd+K opens a fuzzy-search overlay that jumps
+  to panels, switches themes, plays Hue effects, and runs actions
+  (refresh, units, ambient mode, briefing card) without touching the mouse.
+- **Ambient mode** — a full-screen kiosk view cycling the top headline,
+  weather, Kp state, and moon in oversized type with slow crossfades.
+  The iOS app gains a matching Ambient tab.
+- **Kp-reactive UI** — an animated aurora-ribbon background whose speed,
+  thickness, and color track the live Kp index, plus a pulsing storm
+  banner whenever Kp reaches 5. iOS answers with an animated Kp gauge
+  (spring sweep + needle + storm halo).
+- **Daily briefing card** — `GET /api/briefing` assembles the day's
+  weather, solar summary, and top headline; `GET /api/briefing.png`
+  renders it as a shareable 1200×630 PNG in the active theme (Pillow;
+  degrades to the JSON form when Pillow is absent).
+- **Circadian solar sync** — a second Hue sync engine: color temperature
+  and brightness follow the sun (2200K at the horizons, 6500K at solar
+  noon, dim ember overnight), computed from the space module's NOAA
+  sunrise/sunset. Choose it next to the Sync toggle or fire it once
+  from the Hue panel / palette.
+- **Aurora Veil** — effect #101 in the FX library: a slow green →
+  teal → violet drift, hand-authored alongside the ported 100.
 
 ## Quick start
 
@@ -52,6 +76,9 @@ Open http://127.0.0.1:8077. Everything on the page is live:
 
 - **Theme swatches** (top right) re-skin the whole app instantly and persist.
   The °C/°F chip toggles units.
+- **⌘K / Ctrl+K** opens the command palette; **Ambient** starts the
+  full-screen cycling highlight view (click or Esc exits). The background
+  ribbons react to the live Kp index, and a storm banner appears at Kp ≥ 5.
 - **NEWS** — click a headline to read it in the built-in reader (article text
   is fetched and cleaned server-side); source chips filter, the search box
   searches titles and summaries, ● marks unread. ↻ Refresh re-fetches feeds.
@@ -59,10 +86,11 @@ Open http://127.0.0.1:8077. Everything on the page is live:
   30 s). Panel badges read LIVE or CACHED; if the network drops, the last
   data stays on screen with a CACHED badge instead of an error page.
 - **HUE** — with a bridge configured you get real light toggles and
-  brightness sliders, the 100-effect library (▶ Play FX), and *Sync to
-  conditions*, which pushes lighting derived from the live weather/Kp/theme
-  to your lights. Without a bridge the panel shows a clean unconfigured
-  state with setup instructions.
+  brightness sliders, the 101-effect library (▶ Play FX), and two sync
+  engines: *Sync to conditions*, which pushes lighting derived from the
+  live weather/Kp/theme, and *circadian* sync, which tracks the sun's
+  position through the day. Without a bridge the panel shows a clean
+  unconfigured state with setup instructions.
 
 ## Terminal UI
 
@@ -106,7 +134,7 @@ news panel is built on `ultratwo.py` and nothing from `ultra.py` was lost.
         ▼              ▼               ▼               ▼              ▼
    news.py       weather.py       solar.py        space.py        hue.py
    RSS/Atom      Open-Meteo       NOAA SWPC       sun/moon calc   Hue REST
-   + articles    + WMO codes      indices/wind/Kp planets (JPL)   + 100 FX
+   + articles    + WMO codes      indices/wind/Kp planets (JPL)   + 101 FX
         └──────────────┴───────────────┴───────────────┘
                         │               │
                    cache.py        config.py + themes.py
@@ -114,8 +142,9 @@ news panel is built on `ultratwo.py` and nothing from `ultra.py` was lost.
                   articles)         config.json · 8 themes
 ```
 
-Data modules are stdlib-only; FastAPI/uvicorn are the only runtime
-dependencies. Space data is computed locally (NOAA sunrise/sunset algorithm,
+Data modules are stdlib-only; FastAPI/uvicorn are the only hard runtime
+dependencies (Pillow renders the briefing-card PNG and is optional —
+without it the card endpoint degrades to JSON). Space data is computed locally (NOAA sunrise/sunset algorithm,
 synodic moon phase with true illumination, JPL approximate planet elements
 converted to topocentric alt/az) with Open-Meteo and wheretheiss.at as live
 enhancements — so the app works offline from cache and computation, and the
@@ -127,7 +156,8 @@ parents' placeholder planet table is gone.
 `~/.config/ultra/` and `~/.config/solarsync/` configs are migrated
 automatically). Sections: `location` (auto-IP or manual lat/lon),
 `preferences` (units, time format, refresh, theme, mouse, Pi temp), `hue`
-(`bridge_ip`, `api_key`, `lights`, `sync_conditions`), `display`, `feeds`
+(`bridge_ip`, `api_key`, `lights`, `sync_conditions`, `sync_mode` —
+`conditions` or `circadian`), `display`, `feeds`
 (category → [name, url] pairs), `server` (host/port).
 
 Hue credentials can also come from the environment: `HUE_BRIDGE_IP`,
@@ -150,11 +180,14 @@ are not required by any module.
 .venv/bin/python -m pytest tests/ -q
 ```
 
-39 tests: config load/merge/legacy migration, theme engine (all 8 themes),
+53 tests: config load/merge/legacy migration, theme engine (all 8 themes),
 RSS + Atom parsing on fixtures, the FOX undated-entry rule, the article
 cleaner, sun/moon math against known values, cache freshness round-trips,
-the FX table (100 effects, range-checked, secret-scanned), every API
-endpoint including the SPA, and the `--once` / `--export-html` headless runs.
+the FX table (101 effects, range-checked, secret-scanned), every API
+endpoint including the SPA, the `--once` / `--export-html` headless runs,
+plus the 2.0 additions: the circadian curve (sunrise/noon/night, mirek
+clamps, symmetry), briefing-card assembly and PNG rendering, and the
+circadian / sync-mode endpoints.
 
 ## Benchmarks & influences
 
@@ -167,4 +200,6 @@ no build step, nothing between the code and the metal.
 
 ## Version
 
+2.0.0 — command palette, ambient mode (web + iOS), Kp-reactive UI and
+storm banner, daily briefing card, circadian solar sync, Aurora Veil.
 1.0.0 — first unified release.

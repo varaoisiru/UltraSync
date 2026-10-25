@@ -7,6 +7,7 @@ const $ = (id) => document.getElementById(id);
 const state = {
   theme: null, themes: {}, units: "metric",
   sourceFilter: null, lastData: {}, hueConfigured: false,
+  kp: 0, fxList: [],
 };
 
 async function api(path, opts) {
@@ -248,6 +249,14 @@ function renderSolar(data) {
   $("solarEmpty").hidden = !!data.ok;
   const geo = data.geomagnetic || {};
   const wind = data.solar_wind || {};
+  state.kp = parseFloat(geo.kp_index) || 0;
+  const banner = $("stormBanner");
+  if (state.kp >= 5) {
+    banner.hidden = false;
+    banner.textContent = `⚠ GEOMAGNETIC STORM — ${geo.label || "active"} · Kp ${state.kp} · aurora probability ${geo.aurora_probability ?? "—"}%`;
+  } else {
+    banner.hidden = true;
+  }
   $("valSunspot").textContent = data.sunspot_number ?? "—";
   $("valFlux").textContent = data.solar_flux ?? "—";
   $("valKp").textContent = geo.kp_index ?? "—";
@@ -354,6 +363,7 @@ function renderHue(data) {
     box.appendChild(el);
   }
   $("fxNow").textContent = data.fx && data.fx.playing ? "playing: " + data.fx.playing.name : "";
+  if (data.sync_mode) $("hueSyncMode").value = data.sync_mode;
   if (!$("hueBridge").value && data.bridge_ip) $("hueBridge").value = data.bridge_ip;
   if (!$("hueLightIds").value && data.configured_light_ids) $("hueLightIds").value = data.configured_light_ids.join(", ");
 }
@@ -364,6 +374,7 @@ async function refreshHue() {
 async function loadFx() {
   try {
     const data = await api("/api/hue/fx");
+    state.fxList = data.effects;
     const sel = $("fxSelect");
     sel.innerHTML = "";
     for (const fx of data.effects) {
@@ -383,6 +394,22 @@ $("hueSyncToggle").addEventListener("change", async (ev) => {
   const r = await post("/api/hue/sync", { enabled: ev.target.checked });
   if (!r.configured) { ev.target.checked = false; }
   refreshHue();
+});
+$("hueSyncMode").addEventListener("change", async (ev) => {
+  const r = await post("/api/hue/sync", { mode: ev.target.value });
+  if (r.payload) $("circadianNow").textContent = "";
+  refreshHue();
+});
+$("circadianBtn").addEventListener("click", async () => {
+  const el = $("circadianNow");
+  el.textContent = "computing sun position…";
+  try {
+    const r = await post("/api/hue/circadian", { set_mode: true });
+    const when = r.phase === "day" ? `${Math.round((r.day_fraction || 0) * 100)}% through the day` : "night";
+    el.textContent = `${r.kelvin}K · brightness ${r.payload.bri} · ${when}` +
+      (r.configured ? ` · applied to ${r.applied_to} light(s)` : " · bridge not configured (preview only)");
+    $("hueSyncMode").value = "circadian";
+  } catch (e) { el.textContent = "sun times unavailable"; }
 });
 $("hueSave").addEventListener("click", async () => {
   const ids = $("hueLightIds").value.split(",").map((s) => parseInt(s.trim(), 10)).filter((n) => !isNaN(n));
@@ -417,8 +444,214 @@ async function refreshStatus() {
 function drawAllCharts() { drawTempChart(); drawKpChart(); if (state.lastData.space) drawMoon(state.lastData.space.moon_data.phase || 0); }
 window.addEventListener("resize", drawAllCharts);
 
+/* ---------------- 2.0: Kp-reactive background ----------------
+   Flowing aurora ribbons behind the panels. Calm and faint at low Kp;
+   as the index climbs the ribbons speed up, thicken, and shift from
+   the theme primary through accent1 to storm accent3. */
+const kpBg = { t: 0, w: 0, h: 0 };
+function kpIntensity() { return Math.max(0, Math.min(1, state.kp / 9)); }
+function drawKpBackground() {
+  const cv = $("kpCanvas");
+  if (!cv) return;
+  const dpr = window.devicePixelRatio || 1;
+  if (cv.width !== Math.floor(innerWidth * dpr) || cv.height !== Math.floor(innerHeight * dpr)) {
+    cv.width = innerWidth * dpr; cv.height = innerHeight * dpr;
+    cv.style.width = innerWidth + "px"; cv.style.height = innerHeight + "px";
+  }
+  const ctx = cv.getContext("2d");
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  const w = innerWidth, h = innerHeight;
+  ctx.clearRect(0, 0, w, h);
+  const inten = kpIntensity();
+  kpBg.t += 0.004 + inten * 0.03;
+  const colors = [cssVar("--primary"), cssVar("--accent1"), cssVar("--accent3")];
+  const ribbons = 3;
+  for (let i = 0; i < ribbons; i++) {
+    const baseY = h * (0.16 + i * 0.3);
+    const amp = 14 + inten * 66 + i * 7;
+    const speed = kpBg.t * (1 + i * 0.37);
+    const ci = inten >= 0.55 && i === ribbons - 1 ? 2 : i % 2;
+    ctx.beginPath();
+    for (let x = 0; x <= w; x += 14) {
+      const y = baseY
+        + Math.sin(x * 0.006 + speed) * amp
+        + Math.sin(x * 0.017 - speed * 1.6) * amp * 0.32;
+      x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = colors[ci];
+    ctx.globalAlpha = 0.05 + inten * 0.30;
+    ctx.lineWidth = 22 + inten * 46 + i * 6;
+    ctx.lineCap = "round";
+    ctx.stroke();
+  }
+  ctx.globalAlpha = 1;
+  requestAnimationFrame(drawKpBackground);
+}
+
+/* ---------------- 2.0: command palette ---------------- */
+function fuzzyScore(query, text) {
+  if (!query) return 1;
+  const q = query.toLowerCase(), t = text.toLowerCase();
+  let qi = 0, score = 0, run = 0;
+  for (let i = 0; i < t.length && qi < q.length; i++) {
+    if (t[i] === q[qi]) {
+      qi++; run++;
+      score += run * 2 + (i === 0 || t[i - 1] === " " ? 3 : 0);
+    } else { run = 0; }
+  }
+  return qi === q.length ? score : -1;
+}
+function jumpToPanel(id) {
+  const el = $(id);
+  if (!el) return;
+  el.scrollIntoView({ behavior: "smooth", block: "start" });
+  el.classList.remove("flash"); void el.offsetWidth; el.classList.add("flash");
+}
+function paletteActions() {
+  const acts = [];
+  for (const [id, label] of [["panel-news", "News"], ["panel-weather", "Weather"],
+                             ["panel-solar", "Solar Activity"], ["panel-space", "Space"],
+                             ["panel-hue", "Philips Hue"]]) {
+    acts.push({ cat: "PANEL", label: `Go to ${label}`, run: () => jumpToPanel(id) });
+  }
+  for (const [name, t] of Object.entries(state.themes)) {
+    acts.push({ cat: "THEME", label: `Theme: ${t.name || name}`, run: async () => { applyTheme(name); await post("/api/theme", { name }); } });
+  }
+  acts.push(
+    { cat: "ACTION", label: "Refresh news feeds", run: async () => { renderNews(await post("/api/news/refresh")); } },
+    { cat: "ACTION", label: "Refresh all panels", run: async () => { await Promise.allSettled([refreshStatus(), refreshNews(), refreshWeather(), refreshSolar(), refreshSpace(), refreshHue()]); } },
+    { cat: "ACTION", label: "Toggle °C / °F", run: () => $("unitsBtn").click() },
+    { cat: "ACTION", label: "Ambient mode", run: () => setAmbient(true) },
+    { cat: "ACTION", label: "Briefing card (PNG)", run: () => window.open("/api/briefing.png", "_blank") },
+    { cat: "HUE", label: "Sync lights to conditions", run: async () => { await post("/api/hue/sync", { enabled: true }); refreshHue(); } },
+    { cat: "HUE", label: "Circadian sync now (sun)", run: () => $("circadianBtn").click() },
+    { cat: "HUE", label: "Stop FX", run: async () => { await post("/api/hue/fx", { action: "stop" }); refreshHue(); } },
+  );
+  for (const fx of state.fxList) {
+    acts.push({ cat: "FX", label: `Play FX: ${fx.name} — ${fx.description}`, run: async () => {
+      if (!state.hueConfigured) { alert("Configure the Hue bridge first."); return; }
+      $("fxSelect").value = fx.index;
+      await post("/api/hue/fx", { index: fx.index }); refreshHue();
+    } });
+  }
+  return acts;
+}
+const palette = { open: false, items: [], sel: 0 };
+function renderPalette() {
+  const q = $("paletteInput").value.trim();
+  const scored = paletteActions()
+    .map((a) => ({ a, s: fuzzyScore(q, a.cat + " " + a.label) }))
+    .filter((x) => x.s >= 0)
+    .sort((x, y) => y.s - x.s)
+    .slice(0, 12);
+  palette.items = scored.map((x) => x.a);
+  palette.sel = Math.min(palette.sel, Math.max(0, palette.items.length - 1));
+  const list = $("paletteList");
+  list.innerHTML = "";
+  palette.items.forEach((a, i) => {
+    const li = document.createElement("li");
+    if (i === palette.sel) li.className = "active";
+    const cat = document.createElement("span"); cat.className = "cat"; cat.textContent = a.cat;
+    const lbl = document.createElement("span"); lbl.textContent = a.label;
+    li.append(cat, lbl);
+    li.addEventListener("click", () => runPaletteItem(i));
+    list.appendChild(li);
+  });
+}
+async function runPaletteItem(i) {
+  const a = palette.items[i];
+  closePalette();
+  if (a) await a.run();
+}
+function openPalette() {
+  palette.open = true; palette.sel = 0;
+  $("palette").hidden = false;
+  $("paletteInput").value = "";
+  renderPalette();
+  $("paletteInput").focus();
+}
+function closePalette() { palette.open = false; $("palette").hidden = true; }
+$("paletteBtn").addEventListener("click", openPalette);
+$("paletteInput").addEventListener("input", () => { palette.sel = 0; renderPalette(); });
+$("paletteInput").addEventListener("keydown", (e) => {
+  if (e.key === "ArrowDown") { e.preventDefault(); palette.sel = Math.min(palette.sel + 1, palette.items.length - 1); renderPalette(); }
+  else if (e.key === "ArrowUp") { e.preventDefault(); palette.sel = Math.max(palette.sel - 1, 0); renderPalette(); }
+  else if (e.key === "Enter") { e.preventDefault(); runPaletteItem(palette.sel); }
+  else if (e.key === "Escape") { e.preventDefault(); closePalette(); }
+});
+$("palette").addEventListener("click", (e) => { if (e.target === $("palette")) closePalette(); });
+document.addEventListener("keydown", (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "k") {
+    e.preventDefault();
+    palette.open ? closePalette() : openPalette();
+  }
+});
+
+/* ---------------- 2.0: ambient mode ---------------- */
+const ambient = { on: false, timer: null, idx: 0 };
+function ambientSlides() {
+  const slides = [];
+  const news = state.lastData.news;
+  if (news && news.articles && news.articles.length) {
+    const a = news.articles[0];
+    slides.push({ kicker: `TOP HEADLINE · ${a.source}`, big: a.display_title,
+                  sub: news.total_unread ? `${news.total_unread} unread stories` : "" });
+  }
+  const wx = state.lastData.weather;
+  if (wx && wx.ok) {
+    slides.push({ kicker: "WEATHER", big: `${wx.current.icon || ""} ${wx.current.temperature != null ? wx.current.temperature.toFixed(0) : "--"}${wx.unit_symbol}`,
+                  sub: `${wx.current.description || ""} · feels ${wx.current.feels_like != null ? wx.current.feels_like.toFixed(0) : "--"}${wx.unit_symbol}` });
+  }
+  const sol = state.lastData.solar;
+  if (sol && sol.ok && sol.geomagnetic) {
+    slides.push({ kicker: "SOLAR · GEOMAGNETIC", big: `Kp ${sol.geomagnetic.kp_index ?? "—"}`,
+                  sub: `${sol.geomagnetic.label || ""} · aurora probability ${sol.geomagnetic.aurora_probability ?? "—"}%` });
+  }
+  const sp = state.lastData.space;
+  if (sp) {
+    const moon = sp.moon_data || {};
+    slides.push({ kicker: "SPACE · MOON", big: `${moon.icon || "☾"} ${moon.name || ""}`,
+                  sub: `${moon.illumination ?? "—"}% illuminated` +
+                       (sp.iss ? ` · ISS at ${sp.iss.latitude}°, ${sp.iss.longitude}°` : "") });
+  }
+  if (!slides.length) slides.push({ kicker: "ULTRASYNC", big: "▚", sub: "waiting for data…" });
+  return slides;
+}
+function showAmbientSlide() {
+  const slides = ambientSlides();
+  const s = slides[ambient.idx % slides.length];
+  const box = $("ambientSlide");
+  box.classList.add("fading");
+  setTimeout(() => {
+    box.innerHTML = "";
+    const k = document.createElement("div"); k.className = "amb-kicker"; k.textContent = s.kicker;
+    const b = document.createElement("div"); b.className = "amb-big"; b.textContent = s.big;
+    const sub = document.createElement("div"); sub.className = "amb-sub"; sub.textContent = s.sub;
+    box.append(k, b, sub);
+    box.classList.remove("fading");
+  }, 550);
+  ambient.idx++;
+}
+function setAmbient(on) {
+  ambient.on = on;
+  $("ambient").hidden = !on;
+  if (on) {
+    ambient.idx = 0;
+    showAmbientSlide();
+    ambient.timer = setInterval(showAmbientSlide, 6000);
+  } else if (ambient.timer) {
+    clearInterval(ambient.timer); ambient.timer = null;
+  }
+}
+$("ambientBtn").addEventListener("click", () => setAmbient(true));
+$("ambient").addEventListener("click", () => setAmbient(false));
+document.addEventListener("keydown", (e) => {
+  if (e.key === "Escape" && ambient.on) setAmbient(false);
+});
+
 /* ---------------- boot + polling ---------------- */
 (async function boot() {
+  requestAnimationFrame(drawKpBackground);
   try {
     const cfg = await api("/api/config");
     state.units = cfg.preferences.units;

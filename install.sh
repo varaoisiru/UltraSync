@@ -59,7 +59,7 @@ if [ "$UNINSTALL" = true ]; then
 fi
 
 echo "=========================================="
-echo "  UltraSync 1.0.0 Installer"
+echo "  UltraSync 2.0.0 Installer"
 echo "=========================================="
 
 command -v python3 >/dev/null || { print_error "python3 not found"; exit 1; }

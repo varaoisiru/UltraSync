@@ -8,6 +8,7 @@
 </head>
 <body>
 <div class="scanlines" aria-hidden="true"></div>
+<canvas id="kpCanvas" aria-hidden="true"></canvas>
 
 <header class="topbar">
   <div class="brand">
@@ -24,9 +25,13 @@
   <div class="topcontrols">
     <div class="themes" id="themes" title="Theme"></div>
     <button id="unitsBtn" class="chipbtn" title="Toggle units">°C</button>
+    <button id="ambientBtn" class="chipbtn" title="Ambient mode — full-screen cycling highlights">Ambient</button>
+    <button id="paletteBtn" class="chipbtn" title="Command palette">⌘K</button>
     <span class="statuspill" id="statusPill">CONNECTING</span>
   </div>
 </header>
+
+<div class="storm-banner" id="stormBanner" hidden></div>
 
 <main class="grid">
   <!-- NEWS -->
@@ -105,10 +110,14 @@
       <h2>💡 PHILIPS HUE</h2>
       <span class="badge" id="hueBadge">…</span>
       <div class="panel-actions">
-        <label class="switch">Sync to conditions
+        <label class="switch">Sync
           <input type="checkbox" id="hueSyncToggle">
           <span class="track"></span>
         </label>
+        <select id="hueSyncMode" title="Sync engine">
+          <option value="conditions">to conditions</option>
+          <option value="circadian">circadian (sun)</option>
+        </select>
       </div>
     </div>
     <div id="hueBody">
@@ -118,6 +127,10 @@
         <button id="fxPlay" class="chipbtn">▶ Play FX</button>
         <button id="fxStop" class="chipbtn">■ Stop</button>
         <span class="dim" id="fxNow"></span>
+      </div>
+      <div class="fxrow">
+        <button id="circadianBtn" class="chipbtn">☀ Circadian sync now</button>
+        <span class="dim" id="circadianNow"></span>
       </div>
       <details class="huecfg">
         <summary>Bridge settings</summary>
@@ -135,10 +148,26 @@
 </main>
 
 <footer class="foot">
-  <span>UltraSync 1.0.0 — merged from Ultrareader + SolarSync</span>
+  <span>UltraSync 2.0.0 — merged from Ultrareader + SolarSync</span>
   <span class="dim">Data: Open-Meteo · NOAA SWPC · wheretheiss.at · RSS feeds — all free, no keys</span>
   <span class="dim" id="updatedAt"></span>
 </footer>
+
+<!-- Command palette (Ctrl/Cmd+K) -->
+<div class="palette" id="palette" hidden>
+  <div class="palette-card">
+    <input id="paletteInput" type="text" autocomplete="off" spellcheck="false"
+           placeholder="Jump to a panel, switch theme, play an effect, run an action…">
+    <ul id="paletteList"></ul>
+    <div class="palette-foot">↑↓ navigate · Enter run · Esc close</div>
+  </div>
+</div>
+
+<!-- Ambient mode -->
+<div class="ambient" id="ambient" hidden>
+  <div class="ambient-slide" id="ambientSlide"></div>
+  <div class="ambient-hint">AMBIENT · click or press Esc to exit</div>
+</div>
 
 <!-- Article reader -->
 <div class="modal" id="reader" hidden>

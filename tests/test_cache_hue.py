@@ -20,7 +20,7 @@ def test_cache_round_trip(tmp_path):
 
 
 def test_fx_table_complete():
-    assert len(FX) == 100
+    assert len(FX) == 101
     for fx in FX:
         assert fx["name"] and fx["description"]
         assert len(fx["steps"]) >= 1, fx["id"]
