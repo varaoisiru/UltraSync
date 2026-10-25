@@ -19,12 +19,12 @@ struct SpaceData: Codable, Equatable {
     }
 
     struct SunTimes: Codable, Equatable {
-        var sunrise: String?
-        var sunset: String?
-        var moonrise: String?
-        var moonset: String?
-        var sunriseUTC: String?
-        var sunsetUTC: String?
+        var sunrise: String? = nil
+        var sunset: String? = nil
+        var moonrise: String? = nil
+        var moonset: String? = nil
+        var sunriseUTC: String? = nil
+        var sunsetUTC: String? = nil
 
         enum CodingKeys: String, CodingKey {
             case sunrise, sunset, moonrise, moonset
@@ -95,42 +95,5 @@ struct ISSWireResponse: Decodable {
                     velocityKmh: velocity.rounded(),
                     visibility: visibility,
                     live: true)
-    }
-}
-
-// Memberwise-style initializers live in an extension so the Codable
-// synthesis in the main declarations stays untouched.
-extension SpaceData {
-    init(ok: Bool?, location: PlaceInfo?, sunTimes: SunTimes, moon: MoonData,
-         planets: [PlanetPosition], iss: ISSPosition?, issPasses: ISSPassInfo?) {
-        self.ok = ok
-        self.location = location
-        self.sunTimes = sunTimes
-        self.moon = moon
-        self.planets = planets
-        self.iss = iss
-        self.issPasses = issPasses
-    }
-}
-
-extension SpaceData.SunTimes {
-    init(sunrise: String? = nil, sunset: String? = nil,
-         moonrise: String? = nil, moonset: String? = nil,
-         sunriseUTC: String? = nil, sunsetUTC: String? = nil) {
-        self.sunrise = sunrise
-        self.sunset = sunset
-        self.moonrise = moonrise
-        self.moonset = moonset
-        self.sunriseUTC = sunriseUTC
-        self.sunsetUTC = sunsetUTC
-    }
-}
-
-extension SpaceData.MoonData {
-    init(phase: Double, illumination: Double, name: String, icon: String) {
-        self.phase = phase
-        self.illumination = illumination
-        self.name = name
-        self.icon = icon
     }
 }
