@@ -1,0 +1,59 @@
+name: iOS Build (unsigned IPA)
+
+# Builds the UltraSync iOS app on a free GitHub macOS runner and packages it
+# as an UNSIGNED .ipa. The .ipa is meant for sideloading with AltStore /
+# SideStore, which re-sign it with the user's free Apple ID (7-day Personal
+# Team provisioning) at install time. No Apple Developer account, no secrets.
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - 'ios/**'
+      - '.github/workflows/ios-build.yml'
+
+jobs:
+  build:
+    runs-on: macos-14
+    steps:
+      - name: Check out the repo
+        uses: actions/checkout@v4
+
+      - name: Show Xcode version
+        run: xcodebuild -version
+
+      - name: Build (no code signing)
+        run: |
+          set -o pipefail
+          xcodebuild \
+            -project ios/UltraSync/UltraSync.xcodeproj \
+            -scheme UltraSync \
+            -configuration Release \
+            -sdk iphoneos \
+            -destination 'generic/platform=iOS' \
+            CODE_SIGNING_ALLOWED=NO \
+            CODE_SIGNING_REQUIRED=NO \
+            -derivedDataPath build \
+            build 2>&1 | tee build.log
+
+      - name: Package unsigned .ipa
+        run: |
+          APP_PATH=$(find build/Build/Products -maxdepth 3 -name 'UltraSync.app' -type d | head -1)
+          echo "App bundle: $APP_PATH"
+          test -n "$APP_PATH"
+          rm -rf Payload UltraSync-unsigned.ipa
+          mkdir Payload
+          cp -R "$APP_PATH" Payload/
+          zip -qry UltraSync-unsigned.ipa Payload
+          ls -la UltraSync-unsigned.ipa
+
+      - name: Upload .ipa + build log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: UltraSync-unsigned-ipa
+          path: |
+            UltraSync-unsigned.ipa
+            build.log
+          if-no-files-found: ignore
+          retention-days: 30
