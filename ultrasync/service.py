@@ -89,12 +89,12 @@ class DataService:
             "temperature": wx_mod.convert_temp(current.get("temperature_2m"), units),
             "feels_like": wx_mod.convert_temp(current.get("apparent_temperature"), units),
             "humidity": current.get("relative_humidity_2m"),
-            "precipitation": current.get("precipitation"),
+            "precipitation": wx_mod.convert_precip(current.get("precipitation"), units),
             "weather_code": current.get("weather_code"),
             "description": wx_mod.weather_desc(current.get("weather_code")),
             "icon": wx_mod.weather_icon(current.get("weather_code")),
             "cloud_cover": current.get("cloud_cover"),
-            "wind_speed": current.get("wind_speed_10m"),
+            "wind_speed": wx_mod.convert_wind(current.get("wind_speed_10m"), units),
             "wind_direction_deg": current.get("wind_direction_10m"),
             "wind_direction": wx_mod.wind_direction(current.get("wind_direction_10m", 0)),
             "is_day": current.get("is_day"),
@@ -139,6 +139,8 @@ class DataService:
 
         return {"ok": True, "location": loc, "units": units,
                 "unit_symbol": "°F" if units == "imperial" else "°C",
+                "wind_unit": "mph" if units == "imperial" else "km/h",
+                "precip_unit": "in" if units == "imperial" else "mm",
                 "current": out_current, "hourly": hourly, "daily": daily, **meta}
 
     # -- solar ------------------------------------------------------------

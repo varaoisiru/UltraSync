@@ -73,7 +73,7 @@ DEFAULT_CONFIG = {
         "timezone": "UTC",
     },
     "preferences": {
-        "units": "metric",
+        "units": "imperial",
         "time_format": "24h",
         "refresh_minutes": 15,
         "theme": "cyberfire",

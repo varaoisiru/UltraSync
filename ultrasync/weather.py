@@ -76,6 +76,28 @@ def convert_temp(temp_c, units: str):
     return temp_c * 9 / 5 + 32 if units == "imperial" else float(temp_c)
 
 
+def convert_wind(kmh, units: str):
+    """Wind speed: km/h metric, mph imperial."""
+    if kmh is None:
+        return None
+    try:
+        kmh = float(kmh)
+    except (TypeError, ValueError):
+        return None
+    return round(kmh * 0.621371, 1) if units == "imperial" else kmh
+
+
+def convert_precip(mm, units: str):
+    """Precipitation: mm metric, inches imperial."""
+    if mm is None:
+        return None
+    try:
+        mm = float(mm)
+    except (TypeError, ValueError):
+        return None
+    return round(mm / 25.4, 2) if units == "imperial" else mm
+
+
 def format_time(iso_str: str, time_format: str = "24h") -> str:
     if not iso_str:
         return "--:--"

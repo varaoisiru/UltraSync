@@ -36,7 +36,12 @@ def test_weather_endpoint(service):
     assert r.status_code == 200
     body = r.json()
     assert body["ok"] is True
-    assert body["current"]["temperature"] == 21.5
+    # default units are imperial: 21.5 C -> 70.7 F, 12 km/h -> 7.5 mph
+    assert body["current"]["temperature"] == 70.7
+    assert body["unit_symbol"] == "°F"
+    assert body["wind_unit"] == "mph"
+    assert body["precip_unit"] == "in"
+    assert body["current"]["wind_speed"] == 7.5
     assert body["current"]["description"] == "Partly Cloudy"
     assert len(body["daily"]) == 7
     assert len(body["hourly"]) > 0

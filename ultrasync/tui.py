@@ -115,7 +115,7 @@ class Tui:
         lines.append(f"  {cur['icon']} {cur['description']}   "
                      f"{c.hex('accent2')}{cur['temperature']:.0f}{unit}{c.CR}  "
                      f"feels {cur['feels_like']:.0f}{unit}  💧 {cur['humidity']}%  "
-                     f"💨 {cur['wind_speed']} km/h {cur['wind_direction']}  ☁ {cur['cloud_cover']}%")
+                     f"💨 {cur['wind_speed']} {w.get('wind_unit', 'km/h')} {cur['wind_direction']}  ☁ {cur['cloud_cover']}%")
         lines.append("")
         lines.append(f"  {c.hex('accent1')}24H{c.CR}  " + " ".join(
             f"{h['label']} {h['temperature']:.0f}{unit}" if h["temperature"] is not None else ""

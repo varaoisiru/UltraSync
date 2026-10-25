@@ -5,7 +5,7 @@ from ultrasync.config import Config, deep_merge
 
 def test_defaults_present(cfg):
     assert cfg.get("preferences", "theme") == "cyberfire"
-    assert cfg.get("preferences", "units") == "metric"
+    assert cfg.get("preferences", "units") == "imperial"
     assert cfg.get("hue", "lights") == [1, 6]
     assert "news" in cfg.get("feeds")
     assert cfg.get("server", "port") == 8077
@@ -25,7 +25,7 @@ def test_save_load_round_trip(tmp_path):
     assert c2.get("preferences", "theme") == "aurora"
     assert c2.get("hue", "bridge_ip") == "192.0.2.10"
     # untouched defaults survive the round trip
-    assert c2.get("preferences", "units") == "metric"
+    assert c2.get("preferences", "units") == "imperial"
 
 
 def test_public_dict_redacts_key(tmp_path, monkeypatch):

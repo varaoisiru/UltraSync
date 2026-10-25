@@ -186,9 +186,9 @@ function renderWeather(data) {
   $("wxFeels").textContent = c.feels_like != null ? "feels " + c.feels_like.toFixed(0) + data.unit_symbol : "";
   const stats = [
     ["Humidity", c.humidity != null ? c.humidity + "%" : "--"],
-    ["Wind", (c.wind_speed ?? "--") + " km/h " + (c.wind_direction || "")],
+    ["Wind", (c.wind_speed ?? "--") + " " + (data.wind_unit || "km/h") + " " + (c.wind_direction || "")],
     ["Clouds", c.cloud_cover != null ? c.cloud_cover + "%" : "--"],
-    ["Precip", (c.precipitation ?? 0) + " mm"],
+    ["Precip", (c.precipitation ?? 0) + " " + (data.precip_unit || "mm")],
   ];
   $("wxStats").innerHTML = stats.map(([k, v]) => `<span class="dim">${k}</span><span>${v}</span>`).join("");
   const days = $("wxDays");
@@ -329,8 +329,11 @@ function renderSpace(data) {
       `<tr><td>${p.name}</td><td>${p.altitude}°</td><td>${p.azimuth}°</td>` +
       `<td class="${p.visible ? "vis-yes" : "vis-no"}">${p.visible ? "● visible" : "○ below horizon"}</td></tr>`).join("");
   const iss = data.iss;
+  const issImp = state.units === "imperial";
+  const issAlt = iss ? (issImp ? (iss.altitude_km * 0.621371).toFixed(0) + " mi" : iss.altitude_km + " km") : "";
+  const issVel = iss ? (issImp ? (iss.velocity_kmh * 0.621371).toFixed(0) + " mph" : iss.velocity_kmh + " km/h") : "";
   $("issBox").innerHTML = iss
-    ? `🛰 <b>ISS</b> ${iss.live ? "LIVE" : "cached"} — lat ${iss.latitude}°, lon ${iss.longitude}°, alt ${iss.altitude_km} km, ${iss.velocity_kmh} km/h`
+    ? `🛰 <b>ISS</b> ${iss.live ? "LIVE" : "cached"} — lat ${iss.latitude}°, lon ${iss.longitude}°, alt ${issAlt}, ${issVel}`
     : `🛰 <b>ISS</b> — ${data.iss_passes ? "passes: " + data.iss_passes.time + ", duration " + data.iss_passes.duration : "position unavailable offline"}`;
 }
 async function refreshSpace() {
