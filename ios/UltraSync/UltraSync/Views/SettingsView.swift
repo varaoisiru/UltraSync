@@ -7,18 +7,21 @@ struct SettingsView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var serverDraft = ""
     @State private var reconnectMessage: String? = nil
+    @Namespace private var themeGlass
 
     var body: some View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 ScrollView {
-                    VStack(spacing: 14) {
-                        themePanel(theme: theme)
-                        unitsPanel(theme: theme)
-                        dataPanel(theme: theme)
-                        aboutPanel(theme: theme)
+                    GlassEffectContainer(spacing: 14) {
+                        VStack(spacing: 14) {
+                            themePanel(theme: theme)
+                            unitsPanel(theme: theme)
+                            dataPanel(theme: theme)
+                            aboutPanel(theme: theme)
+                        }
                     }
                     .padding(12)
                 }
@@ -26,6 +29,7 @@ struct SettingsView: View {
             .navigationTitle("ULTRASYNC · SETTINGS")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .sensoryFeedback(.selection, trigger: themeManager.theme.id)
         .onAppear { serverDraft = store.backendURLString }
     }
 
@@ -34,37 +38,46 @@ struct SettingsView: View {
     private func themePanel(theme: ThemePalette) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             PanelHeader(title: "Theme")
-            LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
-                ForEach(ThemeCatalog.all) { palette in
-                    Button {
-                        themeManager.select(palette)
-                    } label: {
-                        HStack(spacing: 8) {
-                            HStack(spacing: 3) {
-                                swatch(palette.primaryColor)
-                                swatch(palette.accent1Color)
-                                swatch(palette.accent2Color)
-                                swatch(palette.accent3Color)
+            GlassEffectContainer(spacing: 10) {
+                LazyVGrid(columns: [GridItem(.flexible()), GridItem(.flexible())], spacing: 10) {
+                    ForEach(ThemeCatalog.all) { palette in
+                        Button {
+                            themeManager.select(palette)
+                        } label: {
+                            HStack(spacing: 8) {
+                                HStack(spacing: 3) {
+                                    swatch(palette.primaryColor)
+                                    swatch(palette.accent1Color)
+                                    swatch(palette.accent2Color)
+                                    swatch(palette.accent3Color)
+                                }
+                                Text(palette.name)
+                                    .font(Retro.font(11, weight: .bold))
+                                    .foregroundColor(palette.primaryColor)
+                                Spacer()
+                                if themeManager.theme.id == palette.id {
+                                    Text("●")
+                                        .foregroundColor(palette.accent1Color)
+                                        .font(Retro.font(11))
+                                }
                             }
-                            Text(palette.name)
-                                .font(Retro.font(11, weight: .bold))
-                                .foregroundColor(palette.primaryColor)
-                            Spacer()
-                            if themeManager.theme.id == palette.id {
-                                Text("●")
-                                    .foregroundColor(palette.accent1Color)
-                                    .font(Retro.font(11))
-                            }
+                            .padding(9)
+                            .glassEffect(
+                                .regular
+                                    .tint(palette.bgColor.opacity(0.88))
+                                    .interactive(),
+                                in: .rect(cornerRadius: 12))
+                            .glassEffectID(
+                                themeManager.theme.id == palette.id
+                                    ? "themeSelection" : palette.id,
+                                in: themeGlass)
+                            .overlay(RoundedRectangle(cornerRadius: 12)
+                                .stroke(themeManager.theme.id == palette.id
+                                        ? palette.accent1Color : palette.dimColor.opacity(0.6),
+                                        lineWidth: themeManager.theme.id == palette.id ? 2 : 1))
                         }
-                        .padding(9)
-                        .background(palette.bgColor)
-                        .overlay(RoundedRectangle(cornerRadius: 5)
-                            .stroke(themeManager.theme.id == palette.id
-                                    ? palette.accent1Color : palette.dimColor,
-                                    lineWidth: themeManager.theme.id == palette.id ? 2 : 1))
-                        .clipShape(RoundedRectangle(cornerRadius: 5))
+                        .buttonStyle(.plain)
                     }
-                    .buttonStyle(.plain)
                 }
             }
             Toggle(isOn: $store.showScanlines) {
@@ -76,6 +89,7 @@ struct SettingsView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func swatch(_ color: Color) -> some View {
@@ -119,6 +133,7 @@ struct SettingsView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
         .onChange(of: store.imperialUnits) { _, _ in
             Task { await store.refreshWeather() }
         }
@@ -143,6 +158,7 @@ struct SettingsView: View {
                 }
                 .font(Retro.font(Retro.bodySize, weight: .bold))
                 .foregroundColor(theme.accent1Color)
+                .buttonStyle(.glass)
                 if let reconnectMessage {
                     Text(reconnectMessage)
                         .font(Retro.font(Retro.smallSize))
@@ -163,6 +179,7 @@ struct SettingsView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
         .onChange(of: store.mode) { _, _ in
             Task { await store.boot() }
         }
@@ -196,5 +213,6 @@ struct SettingsView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 }

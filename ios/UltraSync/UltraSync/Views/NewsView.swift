@@ -8,12 +8,13 @@ struct NewsView: View {
     @State private var sourceFilter: String? = nil
     @State private var searchText = ""
     @State private var selected: NewsArticle? = nil
+    @Namespace private var filterGlass
 
     var body: some View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 PanelStateView(state: store.newsState,
                                retry: { Task { await store.refreshNews() } }) { resp in
                     VStack(spacing: 0) {
@@ -41,6 +42,7 @@ struct NewsView: View {
             }
             .searchable(text: $searchText, prompt: "Search headlines")
             .refreshable { await store.refreshNews() }
+            .sensoryFeedback(.selection, trigger: sourceFilter)
             .sheet(item: $selected) { article in
                 ArticleReaderView(article: article)
             }
@@ -50,33 +52,42 @@ struct NewsView: View {
 
     private func filterBar(sources: [String], theme: ThemePalette) -> some View {
         ScrollView(.horizontal, showsIndicators: false) {
-            HStack(spacing: 8) {
-                chip(label: "ALL", active: sourceFilter == nil, theme: theme) {
-                    sourceFilter = nil
-                }
-                ForEach(sources, id: \.self) { source in
-                    chip(label: source, active: sourceFilter == source, theme: theme) {
-                        sourceFilter = sourceFilter == source ? nil : source
+            GlassEffectContainer(spacing: 8) {
+                HStack(spacing: 8) {
+                    chip(label: "ALL", active: sourceFilter == nil, theme: theme) {
+                        sourceFilter = nil
+                    }
+                    ForEach(sources, id: \.self) { source in
+                        chip(label: source, active: sourceFilter == source, theme: theme) {
+                            sourceFilter = sourceFilter == source ? nil : source
+                        }
                     }
                 }
+                .padding(.horizontal, 12)
+                .padding(.vertical, 8)
             }
-            .padding(.horizontal, 12)
-            .padding(.vertical, 8)
         }
     }
 
+    /// Source filter chip in glass. The active chip carries the shared
+    /// glassEffectID, so the selection highlight morphs through the
+    /// glass to the newly picked chip instead of snapping.
     private func chip(label: String, active: Bool, theme: ThemePalette,
                       action: @escaping () -> Void) -> some View {
         Button(action: action) {
             Text(label)
                 .font(Retro.font(11, weight: .bold))
                 .foregroundColor(active ? theme.bgColor : theme.primaryColor)
-                .padding(.horizontal, 10)
-                .padding(.vertical, 5)
-                .background(active ? theme.primaryColor : Color.clear)
-                .overlay(RoundedRectangle(cornerRadius: 4)
-                    .stroke(theme.primaryColor.opacity(0.7), lineWidth: 1))
-                .clipShape(RoundedRectangle(cornerRadius: 4))
+                .padding(.horizontal, 12)
+                .padding(.vertical, 6)
+                .glassEffect(
+                    .regular
+                        .tint(active ? theme.primaryColor.opacity(0.9)
+                                     : theme.panelColor.opacity(0.45))
+                        .interactive(),
+                    in: .capsule)
+                .glassEffectID(active ? "newsFilterSelection" : label,
+                               in: filterGlass)
         }
         .buttonStyle(.plain)
     }
@@ -128,7 +139,8 @@ struct NewsView: View {
                     }
                 }
                 .buttonStyle(.plain)
-                .listRowBackground(theme.panelColor)
+                .listRowBackground(theme.panelColor.opacity(0.55))
+                .listRowSeparatorTint(theme.primaryColor.opacity(0.25))
             }
         }
         .listStyle(.plain)
@@ -151,7 +163,7 @@ struct ArticleReaderView: View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 ScrollView {
                     VStack(alignment: .leading, spacing: 12) {
                         Text(article.source.uppercased())
@@ -180,6 +192,13 @@ struct ArticleReaderView: View {
                                 Text("OPEN ORIGINAL ↗")
                                     .font(Retro.font(12, weight: .bold))
                                     .foregroundColor(theme.accent1Color)
+                                    .padding(.horizontal, 14)
+                                    .padding(.vertical, 8)
+                                    .glassEffect(
+                                        .regular
+                                            .tint(theme.accent1Color.opacity(0.18))
+                                            .interactive(),
+                                        in: .capsule)
                             }
                             .padding(.top, 8)
                         }

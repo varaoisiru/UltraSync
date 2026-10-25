@@ -10,18 +10,20 @@ struct SolarView: View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 PanelStateView(state: store.solarState,
                                retry: { Task { await store.refreshSolar() } }) { solar in
                     ScrollView {
-                        VStack(spacing: 14) {
-                            gaugePanel(solar, theme: theme)
-                            windPanel(solar, theme: theme)
-                            if !solar.forecastSorted.isEmpty {
-                                forecastPanel(solar, theme: theme)
-                            }
-                            if !solar.alerts.isEmpty {
-                                alertsPanel(solar, theme: theme)
+                        GlassEffectContainer(spacing: 14) {
+                            VStack(spacing: 14) {
+                                gaugePanel(solar, theme: theme)
+                                windPanel(solar, theme: theme)
+                                if !solar.forecastSorted.isEmpty {
+                                    forecastPanel(solar, theme: theme)
+                                }
+                                if !solar.alerts.isEmpty {
+                                    alertsPanel(solar, theme: theme)
+                                }
                             }
                         }
                         .padding(12)
@@ -38,7 +40,8 @@ struct SolarView: View {
     private func gaugePanel(_ solar: SolarData, theme: ThemePalette) -> some View {
         VStack(alignment: .leading, spacing: 10) {
             PanelHeader(title: "Solar Activity",
-                        badge: (solar.stale ?? false) ? "CACHED" : "LIVE")
+                        badge: (solar.stale ?? false) ? "CACHED" : "LIVE",
+                        symbol: "sun.max")
             HStack(spacing: 12) {
                 GaugeView(value: solar.sunspotNumber, maxValue: 300,
                           label: "Sunspot #",
@@ -50,6 +53,7 @@ struct SolarView: View {
                           label: "Kp Index",
                           display: solar.geomagnetic.map { String(format: "%.0f", $0.kpIndex) } ?? "--")
             }
+            .retroParallax()
             if let geo = solar.geomagnetic {
                 HStack(spacing: 16) {
                     StatRow(label: "Condition", value: geo.label)
@@ -63,6 +67,7 @@ struct SolarView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func windPanel(_ solar: SolarData, theme: ThemePalette) -> some View {
@@ -82,6 +87,7 @@ struct SolarView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func forecastPanel(_ solar: SolarData, theme: ThemePalette) -> some View {
@@ -93,6 +99,7 @@ struct SolarView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func alertsPanel(_ solar: SolarData, theme: ThemePalette) -> some View {
@@ -106,5 +113,6 @@ struct SolarView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 }

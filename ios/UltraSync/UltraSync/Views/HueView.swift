@@ -16,18 +16,20 @@ struct HueView: View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 PanelStateView(state: store.hueState,
                                retry: { Task { await store.refreshHue() } }) { hue in
                     ScrollView {
-                        VStack(spacing: 14) {
-                            if hue.configured {
-                                lightsPanel(hue, theme: theme)
-                                if store.mode == .backend {
-                                    fxPanel(hue, theme: theme)
+                        GlassEffectContainer(spacing: 14) {
+                            VStack(spacing: 14) {
+                                if hue.configured {
+                                    lightsPanel(hue, theme: theme)
+                                    if store.mode == .backend {
+                                        fxPanel(hue, theme: theme)
+                                    }
+                                } else {
+                                    notConfiguredPanel(theme: theme)
                                 }
-                            } else {
-                                notConfiguredPanel(theme: theme)
                             }
                         }
                         .padding(12)
@@ -38,6 +40,7 @@ struct HueView: View {
             .navigationTitle("ULTRASYNC · HUE")
             .navigationBarTitleDisplayMode(.inline)
         }
+        .sensoryFeedback(.selection, trigger: fxSelection)
         .task {
             if store.hueState.value == nil { await store.refreshHue() }
             bridgeIPDraft = store.hueBridgeIP
@@ -56,7 +59,9 @@ struct HueView: View {
                     .foregroundColor(theme.dimColor)
                 Spacer()
                 Button("All on") { Task { await store.setAllLights(on: true) } }
+                    .buttonStyle(.glass)
                 Button("All off") { Task { await store.setAllLights(on: false) } }
+                    .buttonStyle(.glass)
             }
             .font(Retro.font(Retro.smallSize, weight: .bold))
             .foregroundColor(theme.accent1Color)
@@ -84,6 +89,7 @@ struct HueView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func fxPanel(_ hue: HueState, theme: ThemePalette) -> some View {
@@ -111,9 +117,12 @@ struct HueView: View {
                     Button("▶ Play FX") {
                         Task { await store.playFX(index: fxSelection) }
                     }
+                    .buttonStyle(.glassProminent)
+                    .tint(theme.accent1Color)
                     Button("■ Stop") {
                         Task { await store.playFX(index: nil) }
                     }
+                    .buttonStyle(.glass)
                     if let playing = hue.fx?.playing {
                         Text(playing.name)
                             .font(Retro.font(Retro.smallSize, weight: .bold))
@@ -126,6 +135,7 @@ struct HueView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
         .task { fxList = await store.fetchFXList() }
     }
 
@@ -148,17 +158,15 @@ struct HueView: View {
                 Task { await saveBridge() }
             }
             .font(Retro.font(Retro.bodySize, weight: .bold))
-            .foregroundColor(theme.bgColor)
-            .padding(.horizontal, 16)
-            .padding(.vertical, 9)
-            .background(theme.primaryColor)
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .buttonStyle(.glassProminent)
+            .tint(theme.primaryColor)
             Text("To create a bridge username/API key, press the link button on the bridge, then POST {\"devicetype\":\"ultrasync#ios\"} to http://BRIDGE_IP/api.")
                 .font(Retro.font(10))
                 .foregroundColor(theme.dimColor)
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func saveBridge() async {
@@ -222,6 +230,7 @@ struct LightRow: View {
             .disabled(!light.on)
         }
         .padding(.vertical, 4)
+        .sensoryFeedback(.impact(weight: .light), trigger: light.on)
         .onChange(of: light.bri) { _, _ in
             brightness = light.brightnessFraction
         }
@@ -229,16 +238,15 @@ struct LightRow: View {
 }
 
 extension View {
-    /// Monospaced dark text field matching the panel skin.
+    /// Monospaced text field in a tinted glass well, matching the
+    /// panel skin.
     func retroTextField(_ theme: ThemePalette) -> some View {
         self
             .font(Retro.font(Retro.bodySize))
             .foregroundColor(theme.primaryColor)
             .padding(10)
-            .background(theme.bgColor.opacity(0.6))
-            .overlay(RoundedRectangle(cornerRadius: 4)
-                .stroke(theme.dimColor, lineWidth: 1))
-            .clipShape(RoundedRectangle(cornerRadius: 4))
+            .glassEffect(.regular.tint(theme.bgColor.opacity(0.55)),
+                         in: .rect(cornerRadius: 10))
             .autocorrectionDisabled(true)
             .textInputAutocapitalization(.never)
     }

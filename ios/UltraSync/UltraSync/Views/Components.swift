@@ -43,6 +43,9 @@ struct GaugeView: View {
                     .foregroundColor(theme.primaryColor)
                     .phosphorGlow(theme, radius: 4)
                     .padding(.bottom, 2)
+                    .contentTransition(.numericText())
+                    .animation(.spring(response: 0.45, dampingFraction: 0.8),
+                               value: value)
             }
             Text(label)
                 .font(Retro.font(10))

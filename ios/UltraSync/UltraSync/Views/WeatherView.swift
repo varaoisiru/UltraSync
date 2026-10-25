@@ -10,14 +10,16 @@ struct WeatherView: View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 PanelStateView(state: store.weatherState,
                                retry: { Task { await store.refreshWeather() } }) { wx in
                     ScrollView {
-                        VStack(spacing: 14) {
-                            currentPanel(wx, theme: theme)
-                            chartPanel(wx, theme: theme)
-                            dailyPanel(wx, theme: theme)
+                        GlassEffectContainer(spacing: 14) {
+                            VStack(spacing: 14) {
+                                currentPanel(wx, theme: theme)
+                                chartPanel(wx, theme: theme)
+                                dailyPanel(wx, theme: theme)
+                            }
                         }
                         .padding(12)
                     }
@@ -44,6 +46,9 @@ struct WeatherView: View {
                             .font(Retro.font(44, weight: .bold))
                             .foregroundColor(theme.accent2Color)
                             .phosphorGlow(theme)
+                            .contentTransition(.numericText())
+                            .animation(.spring(response: 0.45, dampingFraction: 0.8),
+                                       value: c.temperature)
                         Text(wx.unitSymbol)
                             .font(Retro.font(20, weight: .bold))
                             .foregroundColor(theme.accent2Color)
@@ -69,9 +74,11 @@ struct WeatherView: View {
                 }
                 .frame(maxWidth: 150)
             }
+            .retroParallax()
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func windText(_ c: WeatherData.CurrentConditions, symbol: String) -> String {
@@ -98,6 +105,7 @@ struct WeatherView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func dailyPanel(_ wx: WeatherData, theme: ThemePalette) -> some View {
@@ -131,6 +139,7 @@ struct WeatherView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     /// Inline min–max range bar scaled to the week's extremes.

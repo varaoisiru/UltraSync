@@ -11,14 +11,16 @@ struct SpaceView: View {
         let theme = themeManager.theme
         NavigationStack {
             ZStack {
-                theme.bgColor.ignoresSafeArea()
+                theme.backdropView.ignoresSafeArea()
                 PanelStateView(state: store.spaceState,
                                retry: { Task { await store.refreshSpace() } }) { space in
                     ScrollView {
-                        VStack(spacing: 14) {
-                            moonPanel(space, theme: theme)
-                            planetsPanel(space, theme: theme)
-                            issPanel(space, theme: theme)
+                        GlassEffectContainer(spacing: 14) {
+                            VStack(spacing: 14) {
+                                moonPanel(space, theme: theme)
+                                planetsPanel(space, theme: theme)
+                                issPanel(space, theme: theme)
+                            }
                         }
                         .padding(12)
                     }
@@ -66,9 +68,11 @@ struct SpaceView: View {
                     }
                 }
             }
+            .retroParallax()
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func planetsPanel(_ space: SpaceData, theme: ThemePalette) -> some View {
@@ -103,11 +107,14 @@ struct SpaceView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     private func issPanel(_ space: SpaceData, theme: ThemePalette) -> some View {
         VStack(alignment: .leading, spacing: 8) {
-            PanelHeader(title: "ISS · Live", badge: space.iss?.live == true ? "LIVE" : "CACHED")
+            PanelHeader(title: "ISS · Live",
+                        badge: space.iss?.live == true ? "LIVE" : "CACHED",
+                        symbol: "antenna.radiowaves.left.and.right")
             if let iss = space.iss {
                 Text(String(format: "lat %.2f°, lon %.2f° · alt %.1f km · %@ km/h",
                             iss.latitude, iss.longitude, iss.altitudeKm,
@@ -115,6 +122,10 @@ struct SpaceView: View {
                     .font(Retro.font(Retro.bodySize, weight: .semibold))
                     .foregroundColor(theme.primaryColor)
                     .phosphorGlow(theme, radius: 3)
+                    .contentTransition(.numericText())
+                    .animation(.spring(response: 0.45, dampingFraction: 0.8),
+                               value: iss.latitude)
+                    .retroParallax(strength: 0.1)
                 if let vis = iss.visibility {
                     StatRow(label: "Visibility", value: vis)
                 }
@@ -126,6 +137,7 @@ struct SpaceView: View {
         }
         .padding(12)
         .retroPanel(theme)
+        .retroScrollTransition()
     }
 
     /// Open-Meteo times arrive as "2026-10-24T06:38"; ISO UTC strings
