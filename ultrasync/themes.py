@@ -72,6 +72,33 @@ THEMES = {
 DEFAULT_THEME = "cyberfire"
 
 
+def _load_extra_themes():
+    """Merge the generated theme variations (themes_extra.json, built
+    by the mesh theme pipeline: 500 palettes in the same schema as the
+    canonical eight). Failure-safe by design: a missing or corrupt
+    file leaves the canonical set untouched, and canonical slugs
+    always win over generated ones."""
+    import json
+    import os
+    path = os.path.join(os.path.dirname(__file__), "themes_extra.json")
+    try:
+        with open(path) as f:
+            extra = json.load(f)
+    except Exception:
+        return
+    if not isinstance(extra, dict):
+        return
+    required = {"name", "bg", "primary", "accent1", "accent2", "accent3",
+                "dim", "ramp", "border", "header", "active", "sel_bg"}
+    for slug, entry in extra.items():
+        if slug not in THEMES and isinstance(entry, dict) \
+                and required.issubset(entry.keys()):
+            THEMES[slug] = entry
+
+
+_load_extra_themes()
+
+
 def theme_names():
     return list(THEMES.keys())
 

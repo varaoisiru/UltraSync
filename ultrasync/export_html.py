@@ -79,7 +79,7 @@ table{{border-collapse:collapse}} td{{padding:3px 10px 3px 0}}
 <p class="dim">ISS: lat {iss.get('latitude', '—')}°, lon {iss.get('longitude', '—')}°, alt {iss.get('altitude_km', '—')} km</p>
 </div>
 
-<p class="dim">UltraSync 2.1.1 snapshot · theme {html.escape(t['name'])} · generated {datetime.now().isoformat(timespec='seconds')}</p>
+<p class="dim">UltraSync 2.2.0 snapshot · theme {html.escape(t['name'])} · generated {datetime.now().isoformat(timespec='seconds')}</p>
 <script>
 function tick(){{let d=new Date();let h=d.getHours();let m=String(d.getMinutes()).padStart(2,'0');let s=String(d.getSeconds()).padStart(2,'0');let ap=h>=12?'PM':'AM';h=h%12||12;document.getElementById('clock').textContent=h+':'+m+':'+s+' '+ap;}}
 setInterval(tick,1000);tick();

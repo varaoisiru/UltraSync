@@ -1,11 +1,18 @@
 from ultrasync import themes
 
 
+CANONICAL = [
+    "cyberfire", "midnight", "phosphor", "solarflare",
+    "aurora", "neonviolet", "deepocean", "toxicwaste",
+]
+
+
 def test_eight_canonical_themes():
-    assert themes.theme_names() == [
-        "cyberfire", "midnight", "phosphor", "solarflare",
-        "aurora", "neonviolet", "deepocean", "toxicwaste",
-    ]
+    # The canonical eight are unchanged and still come first; the 500
+    # mesh-generated variations (themes_extra.json) follow them.
+    names = themes.theme_names()
+    assert names[:8] == CANONICAL
+    assert len(names) == 508
 
 
 def test_every_theme_complete():
@@ -36,5 +43,7 @@ def test_term_colors_all_themes():
 
 def test_next_theme_cycles():
     assert themes.next_theme("cyberfire") == "midnight"
-    assert themes.next_theme("toxicwaste") == "cyberfire"
+    names = themes.theme_names()
+    assert themes.next_theme("toxicwaste") == names[8]  # into the variations
+    assert themes.next_theme(names[-1]) == "cyberfire"  # wraps the full set
     assert themes.next_theme("bogus") == "midnight"  # falls back to first after index 0

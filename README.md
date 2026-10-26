@@ -1,4 +1,4 @@
-# UltraSync 2.1.1
+# UltraSync 2.2.0
 
 **One dashboard for news, weather, solar activity, and space — in a retro
 phosphor skin, on the web and in your terminal.**
@@ -200,6 +200,10 @@ no build step, nothing between the code and the metal.
 
 ## Version
 
+2.2.0 — 500 mesh-generated theme variations (themes_extra.json) join
+the canonical eight: 508 themes drive the web GUI, TUI, export, and
+Hue sync. The extra set loads failure-safe — a missing or corrupt
+file leaves the canonical eight untouched.
 2.1.1 — bug fix: the weather and Kp charts grew taller on every
 redraw (fitCanvas read back its own DPR-scaled height attribute and
 multiplied again), eventually filling the whole screen. Chart
