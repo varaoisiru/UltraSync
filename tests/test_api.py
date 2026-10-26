@@ -18,7 +18,7 @@ def test_status(service):
     r = make_client(service).get("/api/status")
     assert r.status_code == 200
     body = r.json()
-    assert body["ok"] is True and body["version"] == "2.0.0"
+    assert body["ok"] is True and body["version"] == "2.1.0"
     assert body["unread"] == 2
 
 

@@ -470,8 +470,11 @@ function drawKpBackground() {
   const colors = [cssVar("--primary"), cssVar("--accent1"), cssVar("--accent3")];
   const ribbons = 3;
   for (let i = 0; i < ribbons; i++) {
-    const baseY = h * (0.16 + i * 0.3);
-    const amp = 14 + inten * 66 + i * 7;
+    /* Compact (2.1): the ribbons hug a shallow band across the top of
+       the screen instead of sweeping the full height — a background
+       accent, not a full-screen graph. */
+    const baseY = h * (0.05 + i * 0.055);
+    const amp = 5 + inten * 16 + i * 3;
     const speed = kpBg.t * (1 + i * 0.37);
     const ci = inten >= 0.55 && i === ribbons - 1 ? 2 : i % 2;
     ctx.beginPath();
@@ -482,8 +485,8 @@ function drawKpBackground() {
       x === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y);
     }
     ctx.strokeStyle = colors[ci];
-    ctx.globalAlpha = 0.05 + inten * 0.30;
-    ctx.lineWidth = 22 + inten * 46 + i * 6;
+    ctx.globalAlpha = 0.04 + inten * 0.16;
+    ctx.lineWidth = 7 + inten * 13 + i * 3;
     ctx.lineCap = "round";
     ctx.stroke();
   }

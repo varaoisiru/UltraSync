@@ -1,4 +1,4 @@
-# UltraSync 2.0.0
+# UltraSync 2.1.0
 
 **One dashboard for news, weather, solar activity, and space — in a retro
 phosphor skin, on the web and in your terminal.**
@@ -200,6 +200,9 @@ no build step, nothing between the code and the metal.
 
 ## Version
 
+2.1.0 — imperial units by default (wind in mph, precipitation in
+inches), and the Kp aurora background is compact: the ribbons hug a
+shallow band at the top of the screen instead of sweeping full height.
 2.0.0 — command palette, ambient mode (web + iOS), Kp-reactive UI and
 storm banner, daily briefing card, circadian solar sync, Aurora Veil.
 1.0.0 — first unified release.
