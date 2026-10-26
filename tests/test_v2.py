@@ -97,7 +97,7 @@ def test_briefing_assembly():
     assert "Kp 3.0" in data["solar_summary"] and "sunspots 82" in data["solar_summary"]
     assert data["headline"] == "Seeded Headline One"
     assert data["headline_source"] == "BBC"
-    assert data["version"] == "2.1.0"
+    assert data["version"] == "2.1.1"
 
 
 def test_briefing_assembly_degrades_on_empty_panels():

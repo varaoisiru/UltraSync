@@ -18,7 +18,7 @@ ios/
   tools/check_parity.py          ← theme parity checker (see below)
 ```
 
-- Bundle ID: `com.varaoisiru.ultrasync` · Version 2.1.0
+- Bundle ID: `com.varaoisiru.ultrasync` · Version 2.1.1
 - 2.0 additions: an **Ambient tab** (full-screen cycling highlights in
   Liquid Glass, mirroring the web GUI's ambient mode) and an **animated
   Kp gauge** in the Solar tab (spring sweep + needle, storm halo at

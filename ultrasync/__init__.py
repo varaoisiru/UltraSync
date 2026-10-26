@@ -6,5 +6,5 @@ Ultrareader) into one application with a shared theme engine, cache,
 config, and Philips Hue integration.
 """
 
-__version__ = "2.1.0"
+__version__ = "2.1.1"
 __all__ = ["__version__"]

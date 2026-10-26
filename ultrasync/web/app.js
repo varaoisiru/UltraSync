@@ -40,8 +40,14 @@ function setPill(mode) {
 function fitCanvas(cv) {
   const dpr = window.devicePixelRatio || 1;
   const w = cv.clientWidth || cv.parentElement.clientWidth || 300;
-  const h = parseInt(cv.getAttribute("height"), 10) || 90;
-  cv.width = w * dpr; cv.height = h * dpr;
+  /* The intended CSS height is captured ONCE into data-css-h. Reading
+     the height attribute back after a draw returns the DPR-scaled
+     bitmap size (setting cv.height rewrites the attribute), so every
+     redraw multiplied the chart height by dpr — the runaway
+     full-screen graph bug fixed in 2.1.1. */
+  if (!cv.dataset.cssH) cv.dataset.cssH = cv.getAttribute("height") || "90";
+  const h = parseInt(cv.dataset.cssH, 10) || 90;
+  cv.width = Math.round(w * dpr); cv.height = Math.round(h * dpr);
   cv.style.height = h + "px";
   const ctx = cv.getContext("2d");
   ctx.setTransform(dpr, 0, 0, dpr, 0, 0);

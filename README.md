@@ -1,4 +1,4 @@
-# UltraSync 2.1.0
+# UltraSync 2.1.1
 
 **One dashboard for news, weather, solar activity, and space — in a retro
 phosphor skin, on the web and in your terminal.**
@@ -200,6 +200,10 @@ no build step, nothing between the code and the metal.
 
 ## Version
 
+2.1.1 — bug fix: the weather and Kp charts grew taller on every
+redraw (fitCanvas read back its own DPR-scaled height attribute and
+multiplied again), eventually filling the whole screen. Chart
+heights are now pinned to their declared CSS size.
 2.1.0 — imperial units by default (wind in mph, precipitation in
 inches), and the Kp aurora background is compact: the ribbons hug a
 shallow band at the top of the screen instead of sweeping full height.
