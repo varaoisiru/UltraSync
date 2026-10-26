@@ -23,7 +23,13 @@
     <div class="loc" id="location">locating…</div>
   </div>
   <div class="topcontrols">
-    <div class="themes" id="themes" title="Theme"></div>
+    <div class="themepick">
+      <button id="themeBtn" class="chipbtn" title="Choose theme">🎨 <span id="themeBtnName">Theme</span> ▾</button>
+      <div class="themepanel" id="themePanel" hidden>
+        <input id="themeSearch" type="search" placeholder="Search themes…">
+        <div class="themegroups" id="themes"></div>
+      </div>
+    </div>
     <button id="unitsBtn" class="chipbtn" title="Toggle units">°C</button>
     <button id="ambientBtn" class="chipbtn" title="Ambient mode — full-screen cycling highlights">Ambient</button>
     <button id="paletteBtn" class="chipbtn" title="Command palette">⌘K</button>

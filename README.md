@@ -1,4 +1,4 @@
-# UltraSync 2.2.0
+# UltraSync 2.3.0
 
 **One dashboard for news, weather, solar activity, and space — in a retro
 phosphor skin, on the web and in your terminal.**
@@ -200,6 +200,10 @@ no build step, nothing between the code and the metal.
 
 ## Version
 
+2.3.0 — the theme picker is organized: a dropdown panel groups the
+508 themes by family (Canonical, Deep Sea, Jewel Tones, Desert &
+Canyon, Storm & Slate, Forest & Moss, …) with a live search, instead
+of one endless strip of swatches.
 2.2.0 — 500 mesh-generated theme variations (themes_extra.json) join
 the canonical eight: 508 themes drive the web GUI, TUI, export, and
 Hue sync. The extra set loads failure-safe — a missing or corrupt

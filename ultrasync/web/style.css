@@ -38,7 +38,18 @@ body {
 .clock { font-size: 24px; color: var(--accent2); text-shadow: 0 0 8px var(--accent2); }
 .loc { font-size: 12px; color: var(--dim); filter: brightness(1.8); }
 .topcontrols { display: flex; align-items: center; gap: 10px; }
-.themes { display: flex; gap: 6px; }
+.themepick { position: relative; }
+.themepanel { position: absolute; right: 0; top: calc(100% + 6px); z-index: 60;
+  width: min(92vw, 330px); max-height: 62vh; overflow-y: auto;
+  background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px; box-shadow: 0 12px 32px rgba(0, 0, 0, 0.55); }
+.themepanel[hidden] { display: none; }
+.themepanel input[type="search"] { width: 100%; box-sizing: border-box; margin-bottom: 6px;
+  background: transparent; color: var(--primary); border: 1px solid var(--dim);
+  border-radius: 4px; padding: 5px 8px; font: inherit; font-size: 13px; }
+.tgroup summary { cursor: pointer; font-size: 12px; letter-spacing: 1px;
+  color: var(--accent1); padding: 5px 0 3px; }
+.tgroup .tswatches { display: flex; flex-wrap: wrap; gap: 6px; padding: 4px 0 8px; }
 .swatch { width: 20px; height: 20px; border-radius: 4px; border: 2px solid transparent;
   cursor: pointer; padding: 0; }
 .swatch.active { border-color: #fff; box-shadow: 0 0 8px rgba(255,255,255,0.6); }

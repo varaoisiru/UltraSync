@@ -4,11 +4,11 @@ Packaging for the same UltraSync application — no separate Arch code.
 
 ## Install
 
-- `./arch/install.sh` — builds `ultrasync-2.2.0` with makepkg from a
+- `./arch/install.sh` — builds `ultrasync-2.3.0` with makepkg from a
   local tarball of this repo (`sha256sums` is SKIP by design for the
   local source) and installs it; falls back to a manual install when
   makepkg is missing.
-- Or by hand: `tar` the repo as `ultrasync-2.2.0.tar.gz` next to
+- Or by hand: `tar` the repo as `ultrasync-2.3.0.tar.gz` next to
   `arch/PKGBUILD` and run `makepkg -si` in that directory.
 
 Layout after install:

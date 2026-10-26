@@ -59,23 +59,97 @@ function applyTheme(name) {
   const t = state.themes[name];
   if (!t) return;
   state.theme = name;
+  const bn = $("themeBtnName");
+  if (bn) bn.textContent = t.name;
   const root = document.documentElement.style;
   for (const k of ["bg", "primary", "accent1", "accent2", "accent3", "dim"]) root.setProperty("--" + k, t[k]);
   document.querySelectorAll(".swatch").forEach((s) => s.classList.toggle("active", s.dataset.theme === name));
   drawAllCharts();
+}
+/* ---------------- theme picker (2.3: grouped + searchable) ----------------
+   508 swatches in a flat strip was unusable. The picker is now a
+   dropdown panel: themes grouped by family (derived from the slug
+   prefix the mesh pipeline used; -rN rotations stay with their base
+   theme's family), collapsed by default except the active family,
+   with a live search across names and slugs. */
+const CANONICAL_THEMES = ["cyberfire", "midnight", "phosphor", "solarflare",
+                          "aurora", "neonviolet", "deepocean", "toxicwaste"];
+const THEME_FAMILIES = [
+  ["Canonical", (s) => CANONICAL_THEMES.includes(s)],
+  ["Deep Sea", (s) => /^oc/.test(s)],
+  ["Jewel Tones", (s) => /^dsh2-/.test(s)],
+  ["Desert & Canyon", (s) => /^dsh-/.test(s)],
+  ["Storm & Slate", (s) => /^win2-/.test(s)],
+  ["Forest & Moss", (s) => /^win-/.test(s)],
+  ["Neon City", (s) => /^eid/.test(s)],
+  ["Candy & Sorbet", (s) => /^goo2-/.test(s)],
+  ["Volcanic & Ember", (s) => /^goo-/.test(s)],
+  ["Arctic & Glacier", (s) => /^piw-/.test(s)],
+];
+function themeFamily(slug) {
+  const base = slug.replace(/-r[1-6]$/, "");
+  for (const [label, test] of THEME_FAMILIES) if (test(base)) return label;
+  return "More Variations";
+}
+function wireThemePicker() {
+  const btn = $("themeBtn"), panel = $("themePanel"), search = $("themeSearch");
+  if (!btn || btn._wired) return;
+  btn._wired = true;
+  btn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    panel.hidden = !panel.hidden;
+    if (!panel.hidden) search.focus();
+  });
+  panel.addEventListener("click", (e) => e.stopPropagation());
+  document.addEventListener("click", () => { panel.hidden = true; });
+  document.addEventListener("keydown", (e) => { if (e.key === "Escape") panel.hidden = true; });
+  search.addEventListener("input", () => {
+    const q = search.value.trim().toLowerCase();
+    document.querySelectorAll("#themes .tgroup").forEach((det) => {
+      let visible = 0;
+      det.querySelectorAll(".swatch").forEach((s) => {
+        const hit = !q || s.dataset.search.includes(q);
+        s.style.display = hit ? "" : "none";
+        if (hit) visible++;
+      });
+      det.style.display = visible ? "" : "none";
+      if (q && visible) det.open = true;
+    });
+  });
 }
 async function loadThemes() {
   const data = await api("/api/themes");
   state.themes = data.themes;
   const box = $("themes");
   box.innerHTML = "";
+  const groups = new Map();
   for (const [name, t] of Object.entries(data.themes)) {
+    const fam = themeFamily(name);
+    if (!groups.has(fam)) {
+      const det = document.createElement("details");
+      det.className = "tgroup"; det.dataset.family = fam;
+      const sum = document.createElement("summary");
+      const wrap = document.createElement("div");
+      wrap.className = "tswatches";
+      det.appendChild(sum); det.appendChild(wrap);
+      det._sum = sum; det._wrap = wrap; det._count = 0;
+      groups.set(fam, det); box.appendChild(det);
+    }
+    const det = groups.get(fam);
     const b = document.createElement("button");
     b.className = "swatch"; b.dataset.theme = name; b.title = t.name;
+    b.dataset.search = (t.name + " " + name).toLowerCase();
     b.style.background = `linear-gradient(135deg, ${t.primary} 0 55%, ${t.accent1} 55% 100%)`;
-    b.addEventListener("click", async () => { applyTheme(name); await post("/api/theme", { name }); });
-    box.appendChild(b);
+    b.addEventListener("click", async () => {
+      applyTheme(name);
+      await post("/api/theme", { name });
+      $("themePanel").hidden = true;
+    });
+    det._wrap.appendChild(b); det._count++;
+    if (name === data.active) det.open = true;
   }
+  for (const det of groups.values()) det._sum.textContent = `${det.dataset.family} · ${det._count}`;
+  wireThemePicker();
   applyTheme(data.active);
 }
 
